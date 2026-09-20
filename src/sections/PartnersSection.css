@@ -1,0 +1,13 @@
+.partners__row {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.partners__item {
+  color: var(--color-muted);
+  font-weight: 600;
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
