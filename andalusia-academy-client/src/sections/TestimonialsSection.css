@@ -24,3 +24,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+.testimonials__author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.testimonials__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}

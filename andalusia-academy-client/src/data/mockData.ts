@@ -10,12 +10,12 @@ export const featuredCourses: Course[] = [
 
 export const comingSoonCourses: Course[] = [
   { id: 5, title: "Advanced React Patterns", category: "Frontend", image: "/img/course-react-adv.png", duration: "6 weeks", price: 3500, status: "coming-soon" },
-  { id: 6, title: "Microservices with ASP.NET Core", category: "Backend", image: "/img/course-microservices.png", duration: "10 weeks", price: 4800, status: "coming-soon" },
+  { id: 6, title: "Microservices with ASP.NET Core", category: "Backend", image: "/img/course-microservices.jpg", duration: "10 weeks", price: 4800, status: "coming-soon" },
 ];
 
 export const programs: Program[] = [
   { id: 1, title: "Full-Stack Web Development", description: "From frontend fundamentals to production-ready backend systems.", courseCount: 6, image: "/img/program-fullstack.png" },
-  { id: 2, title: "Data & Analytics Track", description: "SQL, data modeling, and reporting for real business decisions.", courseCount: 4, image: "/img/program-data.png" },
+  { id: 2, title: "Data & Analytics Track", description: "SQL, data modeling, and reporting for real business decisions.", courseCount: 4, image: "/img/program-data.jpg" },
 ];
 
 export const careerPaths: CareerPath[] = [
@@ -24,13 +24,13 @@ export const careerPaths: CareerPath[] = [
 ];
 
 export const testimonials: Testimonial[] = [
-  { id: 1, name: "Fatma ", role: "Graduate, Full-Stack Track", quote: "The hands-on projects made the difference — I was job-ready before I finished.", avatar: "/img/avatar1.JPG" },
-  { id: 2, name: "Malak ", role: "Graduate, Data Track", quote: "Instructors were available and the material stayed practical throughout.", avatar: "/img/avatar2.png" },
+  { id: 1, name: "Fatma ", role: "Graduate, Full-Stack Track", quote: "The hands-on projects made the difference — I was job-ready before I finished.", avatar: "/img/avatar1.jpg" },
+  { id: 2, name: "Malak ", role: "Graduate, Data Track", quote: "Instructors were available and the material stayed practical throughout.", avatar: "/img/avatar2.jpg" },
 ];
 
 export const partners: Partner[] = [
   { id: 1, name: "Digital Egypt Pioneers", logo: "/img/partner1.png" },
-  { id: 2, name: "TechCorp", logo: "/img/partner2.png" },
+  { id: 2, name: "TechCorp", logo: "/img/partner2.jpg" },
 ];
 
 export const popularCategories: string[] = [
