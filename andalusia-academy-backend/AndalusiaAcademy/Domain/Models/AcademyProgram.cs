@@ -13,6 +13,8 @@ namespace Domain.Models
         public string Title { get; set; } = string.Empty;
 
         public string? Overview { get; set; }
+        public int CategoryId { get; set; }
+        public Category Category { get; set; } = null!;
 
         public string? Requirements { get; set; }
 
