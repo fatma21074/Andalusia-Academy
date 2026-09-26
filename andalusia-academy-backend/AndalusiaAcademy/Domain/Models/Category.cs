@@ -11,5 +11,6 @@ namespace Domain.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public ICollection<Course> Courses { get; set; } = new List<Course>();
+        public ICollection<AcademyProgram> Programs { get; set; } = new List<AcademyProgram>();
     }
 }

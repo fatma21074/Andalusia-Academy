@@ -16,9 +16,9 @@ namespace Domain.Models
         public int InstructorId { get; set; }
         public Instructor Instructor { get; set; } = null!;
 
-        public DateTime Date { get; set; }
-
-        public string? ZoomLink { get; set; }
+        public DateTime SessionDate { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }   
 
         public string Status { get; set; } = "scheduled"; // scheduled | live | completed | cancelled
 
