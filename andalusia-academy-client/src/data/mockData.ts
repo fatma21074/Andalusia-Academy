@@ -1,5 +1,4 @@
-import type { Course, Program, CareerPath, Testimonial, Partner } from "../types";
-
+import type { Course, Program, CareerPath, Testimonial, Partner, Category } from "../types";
 
 export const featuredCourses: Course[] = [
   { id: 1, title: "Full-Stack .NET Development", category: "Backend", image: "/img/course-dotnet.png", duration: "12 weeks", price: 4500, status: "open" },
@@ -14,8 +13,20 @@ export const comingSoonCourses: Course[] = [
 ];
 
 export const programs: Program[] = [
-  { id: 1, title: "Full-Stack Web Development", description: "From frontend fundamentals to production-ready backend systems.", courseCount: 6, image: "/img/program-fullstack.png" },
-  { id: 2, title: "Data & Analytics Track", description: "SQL, data modeling, and reporting for real business decisions.", courseCount: 4, image: "/img/program-data.jpg" },
+  {
+    id: 1,
+    title: "Full-Stack Web Development",
+    description: "From frontend fundamentals to production-ready backend systems.",
+    courses: [featuredCourses[0], featuredCourses[1], comingSoonCourses[1]],
+    image: "/img/program-fullstack.png",
+  },
+  {
+    id: 2,
+    title: "Data & Analytics Track",
+    description: "SQL, data modeling, and reporting for real business decisions.",
+    courses: [featuredCourses[2]],
+    image: "/img/program-data.jpg",
+  },
 ];
 
 export const careerPaths: CareerPath[] = [
@@ -24,8 +35,8 @@ export const careerPaths: CareerPath[] = [
 ];
 
 export const testimonials: Testimonial[] = [
-  { id: 1, name: "Fatma ", role: "Graduate, Full-Stack Track", quote: "The hands-on projects made the difference — I was job-ready before I finished.", avatar: "/img/avatar1.jpg" },
-  { id: 2, name: "Malak ", role: "Graduate, Data Track", quote: "Instructors were available and the material stayed practical throughout.", avatar: "/img/avatar2.jpg" },
+  { id: 1, name: "Fatma", role: "Graduate, Full-Stack Track", quote: "The hands-on projects made the difference — I was job-ready before I finished.", avatar: "/img/avatar1.JPG" },
+  { id: 2, name: "Malak", role: "Graduate, Data Track", quote: "Instructors were available and the material stayed practical throughout.", avatar: "/img/avatar2.jpg" },
 ];
 
 export const partners: Partner[] = [
@@ -33,11 +44,11 @@ export const partners: Partner[] = [
   { id: 2, name: "TechCorp", logo: "/img/partner2.jpg" },
 ];
 
-export const popularCategories: string[] = [
-  "Backend Development",
-  "Frontend Development",
-  "Data & Analytics",
-  "Cloud & DevOps",
-  "Cybersecurity",
-  "UI/UX Design",
+export const popularCategories: Category[] = [
+  { id: 1, name: "Backend Development" },
+  { id: 2, name: "Frontend Development" },
+  { id: 3, name: "Data & Analytics" },
+  { id: 4, name: "Cloud & DevOps" },
+  { id: 5, name: "Cybersecurity" },
+  { id: 6, name: "UI/UX Design" },
 ];

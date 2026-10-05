@@ -12,7 +12,7 @@ export interface Program {
   id: number;
   title: string;
   description: string;
-  courseCount: number;
+  courses: Course[];
   image: string;
 }
 
@@ -35,4 +35,8 @@ export interface Partner {
   id: number;
   name: string;
   logo: string;
+}
+export interface Category {
+  id: number;
+  name: string;
 }

@@ -8,7 +8,6 @@ export default function Footer() {
           <h3>Andalusia Academy</h3>
           <p>Practical, career-focused learning built with local instructors and real projects.</p>
         </div>
-
         <div className="footer__col">
           <h4>Explore</h4>
           <ul>
@@ -17,7 +16,6 @@ export default function Footer() {
             <li><a href="/career-paths">Career Paths</a></li>
           </ul>
         </div>
-
         <div className="footer__col">
           <h4>Company</h4>
           <ul>
@@ -25,14 +23,12 @@ export default function Footer() {
             <li><a href="/contact">Contact & Support</a></li>
           </ul>
         </div>
-
         <div className="footer__col">
           <h4>Contact</h4>
           <p>info@andalusia-academy.com</p>
           <p>+20 100 000 0000</p>
         </div>
       </div>
-
       <div className="container footer__bottom">
         <span>© {new Date().getFullYear()} Andalusia Academy. All rights reserved.</span>
       </div>

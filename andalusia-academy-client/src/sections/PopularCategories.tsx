@@ -9,8 +9,8 @@ export default function PopularCategories() {
         <SectionHeader title="Popular categories" />
         <div className="popular-categories__grid">
           {popularCategories.map((category) => (
-            <a key={category} href="/courses" className="popular-categories__item">
-              {category}
+            <a key={category.id} href="/courses" className="popular-categories__item">
+              {category.name}
             </a>
           ))}
         </div>

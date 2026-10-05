@@ -21,7 +21,6 @@ export default function Navbar() {
         <NavLink to="/" className="navbar__logo" onClick={() => setOpen(false)}>
           Andalusia Academy
         </NavLink>
-
         <nav className={`navbar__links ${open ? "navbar__links--open" : ""}`}>
           {links.map((link) => (
             <NavLink
@@ -37,7 +36,6 @@ export default function Navbar() {
             Apply Now
           </Button>
         </nav>
-
         <button
           className="navbar__toggle"
           aria-label="Toggle navigation menu"

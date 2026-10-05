@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { careerPaths } from "../data/mockData";
 import SectionHeader from "../components/SectionHeader";
 import Card from "../components/Card";
@@ -16,9 +17,9 @@ export default function CareerPathDiscovery() {
             <Card key={path.id} className="career-paths__card">
               <h3>{path.title}</h3>
               <p>{path.description}</p>
-              <a href={`/career-paths/${path.id}`} className="career-paths__link">
+              <Link to={`/career-paths/${path.id}`} className="career-paths__link">
                 Explore path →
-              </a>
+              </Link>
             </Card>
           ))}
         </div>

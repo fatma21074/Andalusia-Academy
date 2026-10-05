@@ -19,7 +19,7 @@ export default function HeroSection() {
         </div>
         <img
           src="/img/hero-image.jpg"
-          alt="Students collaborating on a project in a learning environment, working together with a focused and engaged mood"
+          alt="Students collaborating on a project"
           className="hero__image"
         />
       </div>
