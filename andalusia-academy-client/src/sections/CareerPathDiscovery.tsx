@@ -1,10 +1,18 @@
 import { Link } from "react-router-dom";
-import { careerPaths } from "../data/mockData";
+import { useApi } from "../hooks/useApi";
+import { careerPathsUrl } from "../services/catalog";
+import type { CareerPath, PagedResult } from "../types";
 import SectionHeader from "../components/SectionHeader";
-import Card from "../components/Card";
+import CareerPathCard from "../components/CareerPathCard";
+import CardGrid from "../components/CardGrid";
+import { ErrorState, LoadingState } from "../components/StateViews";
 import "./CareerPathDiscovery.css";
 
+const url = careerPathsUrl({ pageSize: 3 });
+
 export default function CareerPathDiscovery() {
+  const { data, loading, error, reload } = useApi<PagedResult<CareerPath>>(url);
+
   return (
     <section className="section career-paths">
       <div className="container">
@@ -12,17 +20,22 @@ export default function CareerPathDiscovery() {
           title="Find your career path"
           description="Not sure where to start? See which skills lead to which roles."
         />
-        <div className="career-paths__grid">
-          {careerPaths.map((path) => (
-            <Card key={path.id} className="career-paths__card">
-              <h3>{path.title}</h3>
-              <p>{path.description}</p>
-              <Link to={`/career-paths/${path.id}`} className="career-paths__link">
-                Explore path →
+        {loading && !data && <LoadingState label="Loading career paths…" />}
+        {error && <ErrorState message={error.message} onRetry={reload} />}
+        {data && data.data.length > 0 && (
+          <>
+            <CardGrid>
+              {data.data.map((careerPath) => (
+                <CareerPathCard key={careerPath.id} careerPath={careerPath} />
+              ))}
+            </CardGrid>
+            <p style={{ marginTop: 24 }}>
+              <Link to="/career-paths" className="career-paths__link">
+                View all career paths →
               </Link>
-            </Card>
-          ))}
-        </div>
+            </p>
+          </>
+        )}
       </div>
     </section>
   );

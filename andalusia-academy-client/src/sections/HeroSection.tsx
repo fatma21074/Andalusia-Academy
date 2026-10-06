@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Button from "../components/Button";
 import "./HeroSection.css";
 
@@ -13,8 +14,12 @@ export default function HeroSection() {
             what you'll use on the job.
           </p>
           <div className="hero__actions">
-            <Button variant="primary">Explore Courses</Button>
-            <Button variant="ghost">Talk to an Advisor</Button>
+            <Link to="/courses">
+              <Button variant="primary">Explore Courses</Button>
+            </Link>
+            <Link to="/contact">
+              <Button variant="ghost">Talk to an Advisor</Button>
+            </Link>
           </div>
         </div>
         <img

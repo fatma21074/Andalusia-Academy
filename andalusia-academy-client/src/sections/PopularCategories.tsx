@@ -1,17 +1,25 @@
-import { popularCategories } from "../data/mockData";
+import { Link } from "react-router-dom";
+import { useApi } from "../hooks/useApi";
+import { categoriesUrl } from "../services/catalog";
+import type { Category } from "../types";
 import SectionHeader from "../components/SectionHeader";
 import "./PopularCategories.css";
 
 export default function PopularCategories() {
+  const { data } = useApi<Category[]>(categoriesUrl());
+
+  // Hide the section if categories can't be loaded; the rest of the homepage still works.
+  if (!data || data.length === 0) return null;
+
   return (
     <section className="section section--alt popular-categories">
       <div className="container">
         <SectionHeader title="Popular categories" />
         <div className="popular-categories__grid">
-          {popularCategories.map((category) => (
-            <a key={category.id} href="/courses" className="popular-categories__item">
+          {data.map((category) => (
+            <Link key={category.id} to={`/courses?category=${category.id}`} className="popular-categories__item">
               {category.name}
-            </a>
+            </Link>
           ))}
         </div>
       </div>
