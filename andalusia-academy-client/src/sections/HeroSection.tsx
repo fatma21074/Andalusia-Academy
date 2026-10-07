@@ -1,0 +1,33 @@
+import { Link } from "react-router-dom";
+import Button from "../components/Button";
+import "./HeroSection.css";
+
+export default function HeroSection() {
+  return (
+    <section className="hero">
+      <div className="container hero__inner">
+        <div className="hero__content">
+          <h1>Learn the skills that get you hired — not just a certificate.</h1>
+          <p>
+            Andalusia Academy pairs practical, project-based courses with
+            instructors who work in the field, so what you learn in class is
+            what you'll use on the job.
+          </p>
+          <div className="hero__actions">
+            <Link to="/courses">
+              <Button variant="primary">Explore Courses</Button>
+            </Link>
+            <Link to="/contact">
+              <Button variant="ghost">Talk to an Advisor</Button>
+            </Link>
+          </div>
+        </div>
+        <img
+          src="/img/hero-image.jpg"
+          alt="Students collaborating on a project"
+          className="hero__image"
+        />
+      </div>
+    </section>
+  );
+}

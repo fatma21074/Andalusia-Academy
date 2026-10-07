@@ -1,0 +1,24 @@
+.partners__row {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.partners__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.8;
+}
+
+.partners__logo {
+  height: 28px;
+  width: auto;
+}
+
+.partners__name {
+  color: var(--color-muted);
+  font-weight: 600;
+  font-size: 0.95rem;
+}

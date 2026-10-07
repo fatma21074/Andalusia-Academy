@@ -1,0 +1,67 @@
+.catalog-card-link {
+  display: block;
+  height: 100%;
+}
+
+.catalog-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.catalog-card-link:hover .catalog-card,
+.catalog-card-link:focus-visible .catalog-card {
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 14px rgba(27, 36, 48, 0.08);
+}
+
+.catalog-card .badge {
+  align-self: flex-start;
+}
+
+.catalog-card h3 {
+  margin: 4px 0 0 0;
+  font-size: 1.1rem;
+}
+
+.catalog-card__text {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.catalog-card__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.catalog-card__price {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.catalog-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 4px 0 0 0;
+  padding: 0;
+}
+
+.catalog-card__link {
+  margin-top: auto;
+  padding-top: 8px;
+  color: var(--color-accent-dark);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
