@@ -24,7 +24,10 @@ namespace Application.Services
             var dto = _mapper.Map<CareerPathDetailDto>(careerPath);
 
             // Related programs — one per CareerPathProgram link
-            var programs = careerPath.CareerPathPrograms.Select(cpp => cpp.Program).ToList();
+            var programs = careerPath.CareerPathPrograms
+                .Select(cpp => cpp.Program)
+                .Where(p => p.Status != CatalogStatus.Draft)
+                .ToList();
             dto.RelatedPrograms = _mapper.Map<List<ProgramDto>>(programs);
 
             // Recommended courses — your chosen approach: derived from the
@@ -33,6 +36,7 @@ namespace Application.Services
             // the same course can legitimately appear in more than one program.
             var courses = programs
                 .SelectMany(p => p.ProgramCourses.Select(pc => pc.Course))
+                .Where(c => c.Status != CatalogStatus.Draft)
                 .DistinctBy(c => c.Id)
                 .ToList();
             dto.RecommendedCourses = _mapper.Map<List<CourseDto>>(courses);

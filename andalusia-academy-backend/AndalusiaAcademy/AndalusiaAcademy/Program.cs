@@ -21,11 +21,13 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IProgramRepository, ProgramRepository>();
 builder.Services.AddScoped<ICareerPathRepository, CareerPathRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 // Services
 builder.Services.AddScoped<CourseService>();
 builder.Services.AddScoped<ProgramService>();
 builder.Services.AddScoped<CareerPathService>();
+builder.Services.AddScoped<CategoryService>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

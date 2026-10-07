@@ -1,4 +1,5 @@
 using AutoMapper;
+using Application.Common;
 using Application.DTOs;
 using Domain.Models;
 
@@ -19,11 +20,11 @@ namespace Application.Mapping
 
             // AcademyProgram -> list and detail DTOs
             CreateMap<AcademyProgram, ProgramDto>()
-                .ForMember(d => d.CourseCount, o => o.MapFrom(s => s.ProgramCourses.Count));
+                .ForMember(d => d.CourseCount, o => o.MapFrom(s => s.ProgramCourses.Count(pc => pc.Course.Status != CatalogStatus.Draft)));
 
             CreateMap<AcademyProgram, ProgramDetailDto>()
                 .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category.Name))
-                .ForMember(d => d.IncludedCourses, o => o.MapFrom(s => s.ProgramCourses.Select(pc => pc.Course)));
+                .ForMember(d => d.IncludedCourses, o => o.MapFrom(s => s.ProgramCourses.Select(pc => pc.Course).Where(c => c.Status != CatalogStatus.Draft)));
 
             // CareerPath -> list DTO (detail DTO's lists are filled manually in the service)
             CreateMap<CareerPath, CareerPathDto>();
