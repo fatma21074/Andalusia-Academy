@@ -10,7 +10,8 @@ export default function PartnersSection() {
         <div className="partners__row">
           {partners.map((partner) => (
             <div key={partner.id} className="partners__item">
-              {partner.name}
+              <img src={partner.logo} alt={partner.name} className="partners__logo" />
+              <span className="partners__name">{partner.name}</span>
             </div>
           ))}
         </div>

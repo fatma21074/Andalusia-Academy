@@ -13,8 +13,11 @@ export default function TestimonialsSection() {
             <Card key={t.id} className="testimonials__card">
               <p className="testimonials__quote">&ldquo;{t.quote}&rdquo;</p>
               <div className="testimonials__author">
-                <strong>{t.name}</strong>
-                <span>{t.role}</span>
+                <img src={t.avatar} alt={t.name} className="testimonials__avatar" />
+                <div>
+                  <strong>{t.name}</strong>
+                  <span>{t.role}</span>
+                </div>
               </div>
             </Card>
           ))}

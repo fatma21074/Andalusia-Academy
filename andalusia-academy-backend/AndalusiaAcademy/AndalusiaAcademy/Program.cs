@@ -40,7 +40,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Repositories — Scoped to match AppDbContext's own lifetime
+// CORS: allow the React dev server to call the API
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
+// Repositories - Scoped to match AppDbContext's own lifetime
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IProgramRepository, ProgramRepository>();
 builder.Services.AddScoped<ICareerPathRepository, CareerPathRepository>();
@@ -48,6 +57,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 // Services
 builder.Services.AddScoped<CourseService>();
@@ -56,6 +66,7 @@ builder.Services.AddScoped<CareerPathService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ApplicationService>();
 builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Swagger
@@ -69,7 +80,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Paste just the token — no \"Bearer \" prefix needed, Swagger adds it."
+        Description = "Paste just the token - no \"Bearer \" prefix needed, Swagger adds it."
     });
     options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
     {
@@ -98,6 +109,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();

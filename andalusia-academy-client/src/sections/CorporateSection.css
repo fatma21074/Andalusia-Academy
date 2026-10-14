@@ -1,6 +1,6 @@
 .corporate {
   background: var(--color-ink);
-  color: #fff;
+  color: var(--color-surface);
 }
 
 .corporate__inner {
@@ -12,10 +12,10 @@
 }
 
 .corporate h2 {
-  color: #fff;
+  color: var(--color-surface);
 }
 
 .corporate p {
-  color: #c3cbd4;
+  color: rgba(255, 255, 255, 0.78);
   max-width: 50ch;
 }
