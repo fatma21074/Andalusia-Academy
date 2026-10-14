@@ -17,15 +17,14 @@ namespace AndalusiaAcademy.Repositories
                 .Include(p => p.Category)
                 .Include(p => p.ProgramCourses).ThenInclude(pc => pc.Course).ThenInclude(c => c.Category)
                 .Include(p => p.ProgramCourses).ThenInclude(pc => pc.Course).ThenInclude(c => c.Instructor).ThenInclude(i => i.User)
-                .FirstOrDefaultAsync(p => p.Id == id && p.Status != CatalogStatus.Draft);
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<PagedResult<AcademyProgram>> GetAllAsync(ProgramFilterParams filter)
         {
             var query = _context.AcademyPrograms
                 .Include(p => p.Category)
-                .Include(p => p.ProgramCourses).ThenInclude(pc => pc.Course)
-                .Where(p => p.Status != CatalogStatus.Draft)
+                .Include(p => p.ProgramCourses)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(filter.Search))

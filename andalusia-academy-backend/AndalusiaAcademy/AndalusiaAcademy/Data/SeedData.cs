@@ -16,6 +16,18 @@ namespace AndalusiaAcademy.Data
             var learnerRole = new Role { Name = "Learner" };
             context.Roles.AddRange(adminRole, instructorRole, contentManagerRole, learnerRole);
             await context.SaveChangesAsync();
+            
+            // ---- Admin account (for testing role-protected endpoints) ----
+            var adminUser = new User
+            {
+                FirstName = "Admin",
+                LastName = "Account",
+                Email = "admin@andalusia.academy",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@12345"),
+                Role = adminRole
+            };
+            context.Users.Add(adminUser);
+            await context.SaveChangesAsync();
 
             // ---- Categories ----
             var webDev = new Category { Name = "Web Development" };

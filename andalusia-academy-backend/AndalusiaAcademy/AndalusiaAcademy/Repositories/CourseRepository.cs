@@ -13,11 +13,10 @@ namespace AndalusiaAcademy.Repositories
 
         public async Task<Course?> GetByIdAsync(int id)
         {
-            // Draft courses are not public: they behave as "not found".
             return await _context.Courses
                 .Include(c => c.Category)
                 .Include(c => c.Instructor).ThenInclude(i => i.User)
-                .FirstOrDefaultAsync(c => c.Id == id && c.Status != CatalogStatus.Draft);
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<PagedResult<Course>> GetAllAsync(CourseFilterParams filter)
@@ -25,7 +24,6 @@ namespace AndalusiaAcademy.Repositories
             var query = _context.Courses
                 .Include(c => c.Category)
                 .Include(c => c.Instructor).ThenInclude(i => i.User)
-                .Where(c => c.Status != CatalogStatus.Draft)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(filter.Search))
@@ -39,17 +37,13 @@ namespace AndalusiaAcademy.Repositories
 
             // Whitelisted sorting — never build SQL from a raw client string
             bool desc = string.Equals(filter.Order, "desc", StringComparison.OrdinalIgnoreCase);
-            IOrderedQueryable<Course> ordered = filter.SortBy?.ToLower() switch
+            query = filter.SortBy?.ToLower() switch
             {
                 "price" => desc ? query.OrderByDescending(c => c.Price) : query.OrderBy(c => c.Price),
                 "title" => desc ? query.OrderByDescending(c => c.Title) : query.OrderBy(c => c.Title),
                 "createdat" => desc ? query.OrderByDescending(c => c.CreatedAt) : query.OrderBy(c => c.CreatedAt),
                 _ => query.OrderBy(c => c.Id)
             };
-
-            // Tie-breaker: without it, rows with the same price/title/date can repeat
-            // or disappear between pages.
-            query = ordered.ThenBy(c => c.Id);
 
             var totalCount = await query.CountAsync();
             var data = await query
