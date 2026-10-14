@@ -1,6 +1,6 @@
 .badge {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 600;
@@ -8,11 +8,11 @@
 
 .badge--default {
   background: var(--color-surface-alt);
-  color: var(--color-muted);
+  color: var(--color-ink);
 }
 
 .badge--accent {
-  background: rgba(201, 118, 44, 0.12);
+  background: var(--color-accent-soft);
   color: var(--color-accent-dark);
 }
 

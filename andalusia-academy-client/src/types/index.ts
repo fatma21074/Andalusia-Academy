@@ -82,6 +82,52 @@ export interface CareerPathDetail extends CareerPath {
   recommendedCourses: Course[];
 }
 
+// ---- Auth, applications and payments (Sprint 3) ----
+
+export type Role = "Admin" | "Instructor" | "ContentManager" | "Learner";
+
+/** Response of POST /api/auth/login and /api/auth/register. */
+export interface AuthSession {
+  token: string;
+  userId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: Role;
+}
+
+export interface UserProfile {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string | null;
+  country: string | null;
+  role: Role;
+}
+
+export type ApplicationStatus = "pending" | "approved" | "rejected";
+
+export interface Application {
+  id: number;
+  courseId: number | null;
+  courseTitle: string | null;
+  programId: number | null;
+  programTitle: string | null;
+  status: ApplicationStatus;
+  appliedAt: string;
+  amount: number;
+}
+
+export interface Payment {
+  id: number;
+  applicationId: number;
+  amount: number;
+  status: string;
+  method: string | null;
+  paidAt: string | null;
+}
+
 // ---- Static homepage content (no API for these yet — CMS comes in the final sprint) ----
 
 export interface Testimonial {

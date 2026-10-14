@@ -6,7 +6,7 @@ interface SectionHeaderProps {
   align?: "left" | "center";
 }
 
-export default function SectionHeader({ title, description, align = "left" }: SectionHeaderProps) {
+export default function SectionHeader({ title, description, align = "center" }: SectionHeaderProps) {
   return (
     <div className={`section-header section-header--${align}`}>
       <h2>{title}</h2>

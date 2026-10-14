@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useApi } from "../hooks/useApi";
 import { careerPathUrl } from "../services/catalog";
 import type { CareerPathDetail } from "../types";
@@ -8,6 +8,7 @@ import CardGrid from "../components/CardGrid";
 import CourseCard from "../components/CourseCard";
 import ProgramCard from "../components/ProgramCard";
 import { ErrorState, LoadingState } from "../components/StateViews";
+import PageBanner from "../components/PageBanner";
 import "./DetailPage.css";
 
 export default function CareerPathDetails() {
@@ -15,17 +16,22 @@ export default function CareerPathDetails() {
   const { data: careerPath, loading, error, reload } = useApi<CareerPathDetail>(id ? careerPathUrl(id) : null);
 
   return (
-    <section className="section">
-      <div className="container">
-        <Link to="/career-paths" className="detail__back">
-          ← All career paths
-        </Link>
-
-        {loading && <LoadingState label="Loading career path…" />}
-        {error && <ErrorState message={error.message} onRetry={error.status === 404 ? undefined : reload} />}
-        {!loading && !error && careerPath && <CareerPathContent careerPath={careerPath} />}
-      </div>
-    </section>
+    <>
+      <PageBanner
+        title="Career Path Details"
+        crumbs={[
+          { label: "Career Paths", to: "/career-paths" },
+          { label: careerPath?.title ?? "Details" },
+        ]}
+      />
+      <section className="section">
+        <div className="container">
+          {loading && <LoadingState label="Loading career path…" />}
+          {error && <ErrorState message={error.message} onRetry={error.status === 404 ? undefined : reload} />}
+          {!loading && !error && careerPath && <CareerPathContent careerPath={careerPath} />}
+        </div>
+      </section>
+    </>
   );
 }
 
@@ -36,7 +42,7 @@ function CareerPathContent({ careerPath }: { careerPath: CareerPathDetail }) {
     <>
       <div className="detail__header detail__header--no-image">
         <div>
-          <h1 className="detail__title">{careerPath.title}</h1>
+          <h2 className="detail__title">{careerPath.title}</h2>
           {careerPath.description && <p className="detail__lead">{careerPath.description}</p>}
         </div>
       </div>

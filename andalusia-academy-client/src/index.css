@@ -1,20 +1,27 @@
 :root {
-  /* Color tokens */
-  --color-ink: #1B2430;        /* primary text / deep navy */
-  --color-surface: #FFFFFF;
-  --color-surface-alt: #F5F7FA;
-  --color-accent: #66c92c;     /* warm amber — CTAs, highlights */
-  --color-accent-dark: #20a65c;
-  --color-border: #E3E7EC;
-  --color-muted: #5C6B7A;
+  /* Color tokens (Eduleb palette). Names are kept from Sprint 1/2 so every component re-skins automatically:
+     "accent" is now the brand indigo, "secondary" is the coral used for hover/highlights. */
+  --color-ink: #0b104a;          /* headings, dark sections */
+  --color-text: #4a5355;         /* body text */
+  --color-surface: #ffffff;
+  --color-surface-alt: #f5f5fd;  /* light lavender sections */
+  --color-accent: #525fe1;       /* brand indigo: buttons, links, highlights */
+  --color-accent-dark: #3f4bc8;
+  --color-accent-soft: rgba(82, 95, 225, 0.12);
+  --color-secondary: #f26b65;    /* coral */
+  --color-border: #e6e8f5;
+  --color-muted: #5b6475;
 
   /* Type */
-  --font-display: "Fraunces", Georgia, serif;
-  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Jost", system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, -apple-system, sans-serif;
 
   /* Layout */
   --max-width: 1180px;
-  --radius: 10px;
+  --radius: 6px;
+  --radius-lg: 16px;
+  --shadow-card: 0 12px 32px rgba(11, 16, 74, 0.08);
+  --shadow-hover: 0 16px 40px rgba(11, 16, 74, 0.14);
 }
 
 * {
@@ -28,20 +35,22 @@ html, body {
 
 body {
   font-family: var(--font-body);
-  color: var(--color-ink);
+  color: var(--color-text);
   background: var(--color-surface);
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  line-height: 1.15;
+  font-weight: 600;
+  color: var(--color-ink);
+  line-height: 1.2;
   margin: 0 0 0.5em 0;
 }
 
 p {
   margin: 0 0 1em 0;
-  color: var(--color-muted);
+  color: var(--color-text);
 }
 
 a {
@@ -59,6 +68,11 @@ button {
   cursor: pointer;
 }
 
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
@@ -66,15 +80,43 @@ button {
 }
 
 .section {
-  padding: 64px 0;
+  padding: 72px 0;
 }
 
 .section--alt {
   background: var(--color-surface-alt);
 }
 
+/* Soft multi-color wash used behind the hero and page banners */
+.gradient-soft {
+  background:
+    radial-gradient(55% 90% at 8% 35%, #fde9d3 0%, transparent 62%),
+    radial-gradient(45% 60% at 42% 8%, #f8f5cc 0%, transparent 62%),
+    radial-gradient(50% 75% at 92% 55%, #dfe2ff 0%, transparent 66%),
+    radial-gradient(40% 60% at 28% 105%, #ffd9d8 0%, transparent 62%),
+    #ffffff;
+}
+
 @media (max-width: 640px) {
   .section {
-    padding: 40px 0;
+    padding: 48px 0;
   }
+}
+
+.lead {
+  font-size: 1.15rem;
+  color: var(--color-ink);
+  max-width: 60ch;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

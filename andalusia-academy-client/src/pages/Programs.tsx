@@ -2,7 +2,7 @@ import { useSearchParams } from "react-router-dom";
 import { useApi } from "../hooks/useApi";
 import { programsUrl } from "../services/catalog";
 import type { PagedResult, Program } from "../types";
-import SectionHeader from "../components/SectionHeader";
+import PageBanner from "../components/PageBanner";
 import ProgramCard from "../components/ProgramCard";
 import CardGrid from "../components/CardGrid";
 import SearchBox from "../components/SearchBox";
@@ -32,47 +32,49 @@ export default function Programs() {
   }
 
   return (
-    <section className="section">
-      <div className="container">
-        <SectionHeader title="Programs" description="Structured learning paths made of multiple courses." />
+    <>
+      <PageBanner title="All Programs" crumbs={[{ label: "Programs" }]} />
+      <section className="section">
+        <div className="container">
 
-        <div className="catalog-filters">
-          <SearchBox
-            label="Search"
-            placeholder="Search programs by title"
-            value={search}
-            onSearch={(value) => updateParams({ q: value, page: "" })}
-          />
-        </div>
-
-        {programs.error && !result && <ErrorState message={programs.error.message} onRetry={programs.reload} />}
-        {programs.loading && !result && <LoadingState label="Loading programs…" />}
-
-        {result && result.data.length === 0 && (
-          <EmptyState
-            title="No programs found"
-            message={search ? "Try a different search." : "New programs will appear here soon."}
-          />
-        )}
-
-        {result && result.data.length > 0 && (
-          <>
-            <CardGrid dimmed={programs.loading}>
-              {result.data.map((program) => (
-                <ProgramCard key={program.id} program={program} />
-              ))}
-            </CardGrid>
-            <Pagination
-              page={result.page}
-              totalPages={result.totalPages}
-              onChange={(next) => {
-                updateParams({ page: next > 1 ? String(next) : "" });
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
+          <div className="catalog-filters">
+            <SearchBox
+              label="Search"
+              placeholder="Search programs by title"
+              value={search}
+              onSearch={(value) => updateParams({ q: value, page: "" })}
             />
-          </>
-        )}
-      </div>
-    </section>
+          </div>
+
+          {programs.error && !result && <ErrorState message={programs.error.message} onRetry={programs.reload} />}
+          {programs.loading && !result && <LoadingState label="Loading programs…" />}
+
+          {result && result.data.length === 0 && (
+            <EmptyState
+              title="No programs found"
+              message={search ? "Try a different search." : "New programs will appear here soon."}
+            />
+          )}
+
+          {result && result.data.length > 0 && (
+            <>
+              <CardGrid dimmed={programs.loading}>
+                {result.data.map((program) => (
+                  <ProgramCard key={program.id} program={program} />
+                ))}
+              </CardGrid>
+              <Pagination
+                page={result.page}
+                totalPages={result.totalPages}
+                onChange={(next) => {
+                  updateParams({ page: next > 1 ? String(next) : "" });
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              />
+            </>
+          )}
+        </div>
+      </section>
+    </>
   );
 }

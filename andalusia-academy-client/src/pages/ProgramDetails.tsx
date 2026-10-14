@@ -1,14 +1,15 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useApi } from "../hooks/useApi";
 import { programUrl } from "../services/catalog";
 import type { ProgramDetail } from "../types";
 import { formatPrice } from "../utils/format";
-import Button from "../components/Button";
+import ApplyButton from "../components/ApplyButton";
 import CardGrid from "../components/CardGrid";
 import CourseCard from "../components/CourseCard";
 import DetailFacts from "../components/DetailFacts";
 import StatusBadge from "../components/StatusBadge";
 import { EmptyState, ErrorState, LoadingState } from "../components/StateViews";
+import PageBanner from "../components/PageBanner";
 import "./DetailPage.css";
 
 export default function ProgramDetails() {
@@ -16,17 +17,22 @@ export default function ProgramDetails() {
   const { data: program, loading, error, reload } = useApi<ProgramDetail>(id ? programUrl(id) : null);
 
   return (
-    <section className="section">
-      <div className="container">
-        <Link to="/programs" className="detail__back">
-          ← All programs
-        </Link>
-
-        {loading && <LoadingState label="Loading program…" />}
-        {error && <ErrorState message={error.message} onRetry={error.status === 404 ? undefined : reload} />}
-        {!loading && !error && program && <ProgramContent program={program} />}
-      </div>
-    </section>
+    <>
+      <PageBanner
+        title="Program Details"
+        crumbs={[
+          { label: "Programs", to: "/programs" },
+          { label: program?.title ?? "Details" },
+        ]}
+      />
+      <section className="section">
+        <div className="container">
+          {loading && <LoadingState label="Loading program…" />}
+          {error && <ErrorState message={error.message} onRetry={error.status === 404 ? undefined : reload} />}
+          {!loading && !error && program && <ProgramContent program={program} />}
+        </div>
+      </section>
+    </>
   );
 }
 
@@ -36,16 +42,11 @@ function ProgramContent({ program }: { program: ProgramDetail }) {
       <div className="detail__header detail__header--no-image">
         <div>
           <span className="detail__category">{program.categoryName}</span>
-          <h1 className="detail__title">{program.title}</h1>
+          <h2 className="detail__title">{program.title}</h2>
           {program.overview && <p className="detail__lead">{program.overview}</p>}
           <div className="detail__actions">
             <StatusBadge status={program.status} showOpen />
-            {/* Sprint 3 replaces this with the real application flow. */}
-            {program.status === "open" && (
-              <Link to="/contact">
-                <Button variant="primary">Contact admissions to enroll</Button>
-              </Link>
-            )}
+            {program.status === "open" && <ApplyButton target={{ programId: program.id }} />}
           </div>
         </div>
       </div>

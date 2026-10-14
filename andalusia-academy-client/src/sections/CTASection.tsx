@@ -3,7 +3,7 @@ import "./CTASection.css";
 
 export default function CTASection() {
   return (
-    <section className="section cta">
+    <section className="section cta gradient-soft">
       <div className="container cta__inner">
         <h2>Ready to start learning?</h2>
         <p>Applications for the next intake are open now.</p>

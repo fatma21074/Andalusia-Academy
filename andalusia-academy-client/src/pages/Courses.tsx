@@ -2,7 +2,7 @@ import { useSearchParams } from "react-router-dom";
 import { useApi } from "../hooks/useApi";
 import { categoriesUrl, coursesUrl } from "../services/catalog";
 import type { Category, Course, PagedResult } from "../types";
-import SectionHeader from "../components/SectionHeader";
+import PageBanner from "../components/PageBanner";
 import CourseCard from "../components/CourseCard";
 import CardGrid from "../components/CardGrid";
 import SearchBox from "../components/SearchBox";
@@ -80,78 +80,80 @@ export default function Courses() {
   const result = courses.data;
 
   return (
-    <section className="section">
-      <div className="container">
-        <SectionHeader title="Courses" description="Browse all courses and find the one that fits your goals." />
+    <>
+      <PageBanner title="All Courses" crumbs={[{ label: "Courses" }]} />
+      <section className="section">
+        <div className="container">
 
-        <div className="catalog-filters">
-          <SearchBox
-            label="Search"
-            placeholder="Search courses by title"
-            value={search}
-            onSearch={(value) => updateParams({ q: value })}
-          />
-          {categoryOptions.length > 1 && (
+          <div className="catalog-filters">
+            <SearchBox
+              label="Search"
+              placeholder="Search courses by title"
+              value={search}
+              onSearch={(value) => updateParams({ q: value })}
+            />
+            {categoryOptions.length > 1 && (
+              <SelectField
+                label="Category"
+                value={category}
+                options={categoryOptions}
+                onChange={(value) => updateParams({ category: value })}
+              />
+            )}
             <SelectField
-              label="Category"
-              value={category}
-              options={categoryOptions}
-              onChange={(value) => updateParams({ category: value })}
+              label="Status"
+              value={status}
+              options={STATUS_OPTIONS}
+              onChange={(value) => updateParams({ status: value })}
+            />
+            <SelectField
+              label="Sort by"
+              value={sortOption.value}
+              options={SORT_OPTIONS.map(({ value, label }) => ({ value, label }))}
+              onChange={(value) => updateParams({ sort: value === "newest" ? "" : value })}
+            />
+          </div>
+
+          {result && (
+            <p className="catalog-summary" aria-live="polite">
+              {result.totalCount} {result.totalCount === 1 ? "course" : "courses"} found
+              {hasFilters && (
+                <button type="button" className="catalog-summary__clear" onClick={clearFilters}>
+                  Clear filters
+                </button>
+              )}
+            </p>
+          )}
+
+          {courses.error && !result && <ErrorState message={courses.error.message} onRetry={courses.reload} />}
+          {courses.loading && !result && <LoadingState label="Loading courses…" />}
+
+          {result && result.data.length === 0 && (
+            <EmptyState
+              title="No courses found"
+              message={hasFilters ? "Try a different search or remove some filters." : "New courses will appear here soon."}
+              action={
+                hasFilters ? (
+                  <Button variant="ghost" onClick={clearFilters}>
+                    Clear filters
+                  </Button>
+                ) : undefined
+              }
             />
           )}
-          <SelectField
-            label="Status"
-            value={status}
-            options={STATUS_OPTIONS}
-            onChange={(value) => updateParams({ status: value })}
-          />
-          <SelectField
-            label="Sort by"
-            value={sortOption.value}
-            options={SORT_OPTIONS.map(({ value, label }) => ({ value, label }))}
-            onChange={(value) => updateParams({ sort: value === "newest" ? "" : value })}
-          />
+
+          {result && result.data.length > 0 && (
+            <>
+              <CardGrid dimmed={courses.loading}>
+                {result.data.map((course) => (
+                  <CourseCard key={course.id} course={course} />
+                ))}
+              </CardGrid>
+              <Pagination page={result.page} totalPages={result.totalPages} onChange={changePage} />
+            </>
+          )}
         </div>
-
-        {result && (
-          <p className="catalog-summary" aria-live="polite">
-            {result.totalCount} {result.totalCount === 1 ? "course" : "courses"} found
-            {hasFilters && (
-              <button type="button" className="catalog-summary__clear" onClick={clearFilters}>
-                Clear filters
-              </button>
-            )}
-          </p>
-        )}
-
-        {courses.error && !result && <ErrorState message={courses.error.message} onRetry={courses.reload} />}
-        {courses.loading && !result && <LoadingState label="Loading courses…" />}
-
-        {result && result.data.length === 0 && (
-          <EmptyState
-            title="No courses found"
-            message={hasFilters ? "Try a different search or remove some filters." : "New courses will appear here soon."}
-            action={
-              hasFilters ? (
-                <Button variant="ghost" onClick={clearFilters}>
-                  Clear filters
-                </Button>
-              ) : undefined
-            }
-          />
-        )}
-
-        {result && result.data.length > 0 && (
-          <>
-            <CardGrid dimmed={courses.loading}>
-              {result.data.map((course) => (
-                <CourseCard key={course.id} course={course} />
-              ))}
-            </CardGrid>
-            <Pagination page={result.page} totalPages={result.totalPages} onChange={changePage} />
-          </>
-        )}
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

@@ -2,28 +2,31 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 24px;
+  gap: 8px;
+  padding: 12px 26px;
   border-radius: var(--radius);
   border: 1px solid transparent;
   font-size: 0.95rem;
   font-weight: 600;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 
 .btn--primary {
   background: var(--color-accent);
-  color: var(--color-surface);
+  border-color: var(--color-accent);
+  color: #fff;
 }
 .btn--primary:hover {
-  background: var(--color-accent-dark);
+  background: var(--color-secondary);
+  border-color: var(--color-secondary);
 }
 
 .btn--secondary {
   background: var(--color-ink);
-  color: var(--color-surface);
+  color: #fff;
 }
 .btn--secondary:hover {
-  background: #0f151d;
+  background: var(--color-accent);
 }
 
 .btn--ghost {
@@ -32,5 +35,11 @@
   border-color: var(--color-border);
 }
 .btn--ghost:hover {
-  border-color: var(--color-ink);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
