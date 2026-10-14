@@ -64,9 +64,9 @@ Open the local URL Vite prints in the terminal (typically `http://localhost:5173
 
 The client reads the API address from `andalusia-academy-client/.env.development`:
 ```
-VITE_API_BASE_URL=https://localhost:7200
+VITE_API_BASE_URL=http://localhost:5120
 ```
-Run the backend first, using the `https` launch profile. If you use the `http` profile instead, set this value to `http://localhost:5120`.
+Run the backend first (`dotnet run` from the API project). The example above matches the `http` launch profile — if your backend prints an `https://` URL instead, use that port here.
 
 ## Project structure
 
