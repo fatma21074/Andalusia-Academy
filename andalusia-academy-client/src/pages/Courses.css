@@ -1,0 +1,27 @@
+.catalog-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.catalog-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 20px 0;
+  font-size: 0.9rem;
+}
+
+.catalog-summary__clear {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-accent-dark);
+  font-weight: 600;
+  text-decoration: underline;
+}
