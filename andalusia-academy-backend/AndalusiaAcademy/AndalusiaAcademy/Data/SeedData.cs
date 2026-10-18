@@ -39,9 +39,9 @@ namespace AndalusiaAcademy.Data
 
             // ---- Instructor users ----
             // NOTE: PasswordHash is a placeholder — real hashing arrives in Sprint 3's auth work.
-            var userSara = new User { FirstName = "Sara", LastName = "Nabil", Email = "sara.nabil@andalusia.academy", PasswordHash = "SEED_PLACEHOLDER", Role = instructorRole };
-            var userOmar = new User { FirstName = "Omar", LastName = "Said", Email = "omar.said@andalusia.academy", PasswordHash = "SEED_PLACEHOLDER", Role = instructorRole };
-            var userLayla = new User { FirstName = "Layla", LastName = "Ahmed", Email = "layla.ahmed@andalusia.academy", PasswordHash = "SEED_PLACEHOLDER", Role = instructorRole };
+            var userSara = new User { FirstName = "Sara", LastName = "Nabil", Email = "sara.nabil@andalusia.academy", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Instructor@12345"), Role = instructorRole };
+            var userOmar = new User { FirstName = "Omar", LastName = "Said", Email = "omar.said@andalusia.academy", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Instructor@12345"), Role = instructorRole };
+            var userLayla = new User { FirstName = "Layla", LastName = "Ahmed", Email = "layla.ahmed@andalusia.academy", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Instructor@12345"), Role = instructorRole };
             context.Users.AddRange(userSara, userOmar, userLayla);
             await context.SaveChangesAsync();
 
