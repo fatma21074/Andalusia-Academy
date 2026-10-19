@@ -45,5 +45,6 @@ namespace Domain.Models
         public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
         public ICollection<Session> Sessions { get; set; } = new List<Session>();
         public ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
+        public ICollection<CourseMaterial> Materials { get; set; } = new List<CourseMaterial>();
     }
 }

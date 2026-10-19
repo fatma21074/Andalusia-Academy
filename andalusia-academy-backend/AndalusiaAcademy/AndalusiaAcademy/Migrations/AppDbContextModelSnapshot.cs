@@ -236,6 +236,39 @@ namespace AndalusiaAcademy.Migrations
                     b.ToTable("Courses");
                 });
 
+            modelBuilder.Entity("Domain.Models.CourseMaterial", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("CourseMaterials");
+                });
+
             modelBuilder.Entity("Domain.Models.Enrollment", b =>
                 {
                     b.Property<int>("Id")
@@ -632,6 +665,17 @@ namespace AndalusiaAcademy.Migrations
                     b.Navigation("Instructor");
                 });
 
+            modelBuilder.Entity("Domain.Models.CourseMaterial", b =>
+                {
+                    b.HasOne("Domain.Models.Course", "Course")
+                        .WithMany("Materials")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("Domain.Models.Enrollment", b =>
                 {
                     b.HasOne("Domain.Models.EnrollmentApplication", "Application")
@@ -818,6 +862,8 @@ namespace AndalusiaAcademy.Migrations
                     b.Navigation("Assignments");
 
                     b.Navigation("Enrollments");
+
+                    b.Navigation("Materials");
 
                     b.Navigation("ProgramCourses");
 

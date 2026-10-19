@@ -64,6 +64,14 @@ namespace AndalusiaAcademy.Data
             context.Courses.AddRange(course1, course2, course3, course4, course5, course6, course7, course8);
             await context.SaveChangesAsync();
 
+                        // ---- Course materials ----
+            context.CourseMaterials.AddRange(
+                new CourseMaterial { Course = course1, Title = "React Fundamentals — Slides", Type = "link", Url = "https://example.com/react-slides" },
+                new CourseMaterial { Course = course1, Title = "Starter code (GitHub)", Type = "link", Url = "https://example.com/react-starter" },
+                new CourseMaterial { Course = course3, Title = "Python for Data Analysis — Notebook", Type = "link", Url = "https://example.com/python-notebook" }
+            );
+            await context.SaveChangesAsync();
+
             // ---- Programs (each bundles a few courses) ----
             var frontendProgram = new AcademyProgram { Title = "Frontend Development Program", Overview = "Go from HTML basics to building full React applications.", Requirements = "Basic computer literacy", Duration = "10 weeks", Location = "Cairo Branch", Price = 6000m, Status = "open", Category = webDev };
             var dataProgram = new AcademyProgram { Title = "Data Science Program", Overview = "Python, data analysis, and an introduction to machine learning.", Requirements = "Basic math background", Duration = "18 weeks", Location = "Alexandria Branch", Price = 9000m, Status = "open", Category = dataScience };

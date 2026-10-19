@@ -24,6 +24,7 @@ namespace AndalusiaAcademy.Data
         public DbSet<Assignment> Assignments => Set<Assignment>();
         public DbSet<Submission> Submissions => Set<Submission>();
         public DbSet<Testimonial> Testimonials => Set<Testimonial>();
+        public DbSet<CourseMaterial> CourseMaterials => Set<CourseMaterial>();
 
         protected override void OnModelCreating(ModelBuilder b)
         {
