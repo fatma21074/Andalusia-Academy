@@ -49,7 +49,7 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
-// Repositories — Scoped to match AppDbContext's own lifetime
+// Repositories - Scoped to match AppDbContext's own lifetime
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IProgramRepository, ProgramRepository>();
 builder.Services.AddScoped<ICareerPathRepository, CareerPathRepository>();
@@ -80,7 +80,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Paste just the token — no \"Bearer \" prefix needed, Swagger adds it."
+        Description = "Paste just the token - no \"Bearer \" prefix needed, Swagger adds it."
     });
     options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
     {
