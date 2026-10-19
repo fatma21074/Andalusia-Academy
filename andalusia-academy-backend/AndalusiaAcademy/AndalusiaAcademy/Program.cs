@@ -58,6 +58,7 @@ builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ILearnerRepository, LearnerRepository>();
 
 // Services
 builder.Services.AddScoped<CourseService>();
@@ -67,6 +68,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ApplicationService>();
 builder.Services.AddScoped<PaymentService>();
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<LearnerService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Swagger
