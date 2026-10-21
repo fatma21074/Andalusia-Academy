@@ -128,6 +128,56 @@ export interface Payment {
   paidAt: string | null;
 }
 
+// ---- Learner dashboard (Sprint 4) ----
+
+export interface MyCourse {
+  courseId: number;
+  title: string;
+  status: string;
+  enrolledAt: string;
+  progressPercent: number;
+}
+
+export type SessionStatus = "scheduled" | "live" | "completed" | "cancelled";
+export type AttendanceStatus = "present" | "late" | "absent" | "excused";
+
+export interface SessionInfo {
+  id: number;
+  sessionDate: string;
+  startTime: string;
+  endTime: string;
+  status: SessionStatus;
+  myAttendanceStatus: AttendanceStatus | null;
+}
+
+export interface AssignmentInfo {
+  id: number;
+  title: string;
+  description: string | null;
+  dueDate: string | null;
+  mySubmissionStatus: "submitted" | "graded" | null;
+  myScore: number | null;
+}
+
+export interface MaterialInfo {
+  id: number;
+  title: string;
+  type: "link" | "file";
+  url: string;
+}
+
+export interface CourseLearning {
+  courseId: number;
+  title: string;
+  location: string | null;
+  schedule: string | null;
+  instructorName: string;
+  materials: MaterialInfo[];
+  sessions: SessionInfo[];
+  assignments: AssignmentInfo[];
+  progressPercent: number;
+}
+
 // ---- Static homepage content (no API for these yet — CMS comes in the final sprint) ----
 
 export interface Testimonial {
