@@ -59,6 +59,7 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ILearnerRepository, LearnerRepository>();
+builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 
 // Services
 builder.Services.AddScoped<CourseService>();
@@ -70,6 +71,8 @@ builder.Services.AddScoped<PaymentService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<LearnerService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<InstructorService>();
+builder.Services.AddScoped<AdminService>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

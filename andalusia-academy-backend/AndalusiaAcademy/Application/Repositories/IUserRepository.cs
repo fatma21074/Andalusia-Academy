@@ -9,5 +9,6 @@ namespace Application.Repositories
         Task<bool> EmailExistsAsync(string email);
         Task<Role?> GetRoleByNameAsync(string roleName);
         Task AddUserAsync(User user);
+        Task<List<User>> GetAllUsersAsync();
     }
 }

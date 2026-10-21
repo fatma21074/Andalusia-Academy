@@ -39,5 +39,9 @@ namespace AndalusiaAcademy.Repositories
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
+                public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await _context.Users.Include(u => u.Role).ToListAsync();
+        }
     }
 }

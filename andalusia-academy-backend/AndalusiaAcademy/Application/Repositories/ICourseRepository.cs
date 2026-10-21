@@ -7,5 +7,8 @@ namespace Application.Repositories
     {
         Task<Course?> GetByIdAsync(int id);
         Task<PagedResult<Course>> GetAllAsync(CourseFilterParams filter);
+        Task AddAsync(Course course);
+        Task<bool> UpdateAsync(int id, Action<Course> apply);
+        Task<bool> DeleteAsync(int id);
     }
 }
