@@ -59,5 +59,30 @@ namespace AndalusiaAcademy.Repositories
                 TotalCount = totalCount
             };
         }
+                public async Task AddAsync(Course course)
+        {
+            _context.Courses.Add(course);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> UpdateAsync(int id, Action<Course> apply)
+        {
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+            if (course is null) return false;
+
+            apply(course);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+            if (course is null) return false;
+
+            _context.Courses.Remove(course);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
