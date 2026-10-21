@@ -1,0 +1,28 @@
+.my-courses {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.my-courses h2 {
+  font-size: 1.5rem;
+  margin: 8px 0 0 0;
+}
+
+.my-courses__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.my-courses__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 720px) {
+  .my-courses__stats {
+    grid-template-columns: 1fr;
+  }
+}
