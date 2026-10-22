@@ -8,8 +8,8 @@ export default function CorporateSection() {
         <div>
           <h2>Training for your team</h2>
           <p>
-            Custom cohorts, flexible scheduling, and progress reporting for companies investing in their people's
-            technical skills.
+            Custom cohorts, flexible scheduling, and progress reporting for companies investing in
+            their people's technical skills.
           </p>
         </div>
         <Button variant="secondary">Talk to Our Corporate Team</Button>

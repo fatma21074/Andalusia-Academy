@@ -12,9 +12,9 @@
 }
 
 .alert--success {
-  background: var(--color-surface-alt);
-  border-color: var(--color-muted);
-  color: var(--color-ink);
+  background: #e9f7ef;
+  border-color: #bfe3cd;
+  color: #1d6b3d;
 }
 
 .alert a {

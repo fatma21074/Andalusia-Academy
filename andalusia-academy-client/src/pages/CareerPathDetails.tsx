@@ -19,7 +19,10 @@ export default function CareerPathDetails() {
     <>
       <PageBanner
         title="Career Path Details"
-        crumbs={[{ label: "Career Paths", to: "/career-paths" }, { label: careerPath?.title ?? "Details" }]}
+        crumbs={[
+          { label: "Career Paths", to: "/career-paths" },
+          { label: careerPath?.title ?? "Details" },
+        ]}
       />
       <section className="section">
         <div className="container">

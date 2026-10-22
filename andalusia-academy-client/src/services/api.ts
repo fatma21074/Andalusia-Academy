@@ -15,7 +15,7 @@ export class ApiError extends Error {
 }
 
 interface RequestOptions {
-  method?: "GET" | "POST" | "PUT" | "DELETE";
+  method?: "GET" | "POST";
   body?: unknown;
   signal?: AbortSignal;
   /** Attach the JWT when there is one. Login/register turn this off. */
@@ -87,12 +87,4 @@ export function postJson<T>(
   options: Pick<RequestOptions, "authenticated" | "signal"> = {},
 ): Promise<T> {
   return request<T>(path, { ...options, method: "POST", body });
-}
-
-export function putJson<T>(path: string, body: unknown): Promise<T> {
-  return request<T>(path, { method: "PUT", body });
-}
-
-export function deleteJson<T = { message?: string }>(path: string): Promise<T> {
-  return request<T>(path, { method: "DELETE" });
 }

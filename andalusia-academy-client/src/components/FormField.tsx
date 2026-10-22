@@ -10,15 +10,7 @@ interface FormFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "on
   optional?: boolean;
 }
 
-export default function FormField({
-  id,
-  label,
-  value,
-  onChange,
-  error,
-  optional = false,
-  ...inputProps
-}: FormFieldProps) {
+export default function FormField({ id, label, value, onChange, error, optional = false, ...inputProps }: FormFieldProps) {
   const errorId = `${id}-error`;
 
   return (

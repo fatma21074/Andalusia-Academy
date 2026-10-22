@@ -13,26 +13,16 @@ export default function Footer() {
         <div className="footer__col">
           <h4>Explore</h4>
           <ul>
-            <li>
-              <Link to="/courses">Courses</Link>
-            </li>
-            <li>
-              <Link to="/programs">Programs</Link>
-            </li>
-            <li>
-              <Link to="/career-paths">Career Paths</Link>
-            </li>
+            <li><Link to="/courses">Courses</Link></li>
+            <li><Link to="/programs">Programs</Link></li>
+            <li><Link to="/career-paths">Career Paths</Link></li>
           </ul>
         </div>
         <div className="footer__col">
           <h4>Company</h4>
           <ul>
-            <li>
-              <Link to="/about">About Us</Link>
-            </li>
-            <li>
-              <Link to="/contact">Contact & Support</Link>
-            </li>
+            <li><Link to="/about">About Us</Link></li>
+            <li><Link to="/contact">Contact & Support</Link></li>
           </ul>
         </div>
         <div className="footer__col">

@@ -9,9 +9,7 @@
   gap: 6px;
   height: 100%;
   border-top: 4px solid var(--color-accent);
-  transition:
-    box-shadow 0.25s ease,
-    transform 0.25s ease;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .catalog-card-link:hover .catalog-card,

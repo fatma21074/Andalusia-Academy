@@ -29,20 +29,19 @@ export function applicationTitle(application: Application): string {
   return application.courseTitle ?? application.programTitle ?? "Application";
 }
 
+// Session dates/times come as plain date/time-of-day strings — formatted separately
+// from formatDate's full-timestamp handling.
 export function formatSessionDate(iso: string): string {
-  const date = new Date(iso);
-  return Number.isNaN(date.getTime())
-    ? iso
-    : date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  const hasZone = /(Z|[+-]\d{2}:?\d{2})$/.test(iso);
+  const date = new Date(hasZone ? iso : `${iso}Z`);
+  return date.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
 }
 
-export function formatTime(value: string): string {
-  // ASP.NET TimeSpan is usually serialized as HH:mm:ss; accept HH:mm too.
-  const match = /^(\d{1,2}):(\d{2})/.exec(value);
-  if (!match) return value;
-  const hours = Number(match[1]);
-  const minutes = Number(match[2]);
-  const date = new Date();
-  date.setHours(hours, minutes, 0, 0);
-  return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+export function formatTime(time: string): string {
+  const [hoursStr, minutesStr] = time.split(":");
+  const hours = Number(hoursStr);
+  const minutes = Number(minutesStr);
+  const period = hours >= 12 ? "PM" : "AM";
+  const twelveHour = hours % 12 === 0 ? 12 : hours % 12;
+  return `${twelveHour}:${minutes.toString().padStart(2, "0")} ${period}`;
 }

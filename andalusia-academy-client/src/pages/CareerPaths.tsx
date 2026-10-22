@@ -36,6 +36,7 @@ export default function CareerPaths() {
       <PageBanner title="Career Paths" crumbs={[{ label: "Career Paths" }]} />
       <section className="section">
         <div className="container">
+
           <div className="catalog-filters">
             <SearchBox
               label="Search"

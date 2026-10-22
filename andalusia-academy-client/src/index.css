@@ -1,19 +1,16 @@
 :root {
-  color-scheme: light;
-
-  /* Brand colors inspired by the academy logo. */
-  --color-ink: #49604c;
-  --color-text: #49604c;
+  /* Color tokens (Eduleb palette). Names are kept from Sprint 1/2 so every component re-skins automatically:
+     "accent" is now the brand indigo, "secondary" is the coral used for hover/highlights. */
+  --color-ink: #0b104a;          /* headings, dark sections */
+  --color-text: #4a5355;         /* body text */
   --color-surface: #ffffff;
-  --color-surface-alt: #d0dece;
-  --color-accent: #d3ad7d;
-  --color-on-accent: #344337;
-  --color-accent-dark: #49604c;
-  --color-accent-soft: rgba(211, 173, 125, 0.18);
-  --color-secondary: #5b7157;
-  --color-gold-light: #d2ac7c;
-  --color-border: #d0dece;
-  --color-muted: #7f8b78;
+  --color-surface-alt: #f5f5fd;  /* light lavender sections */
+  --color-accent: #525fe1;       /* brand indigo: buttons, links, highlights */
+  --color-accent-dark: #3f4bc8;
+  --color-accent-soft: rgba(82, 95, 225, 0.12);
+  --color-secondary: #f26b65;    /* coral */
+  --color-border: #e6e8f5;
+  --color-muted: #5b6475;
 
   /* Type */
   --font-display: "Jost", system-ui, sans-serif;
@@ -23,35 +20,15 @@
   --max-width: 1180px;
   --radius: 6px;
   --radius-lg: 16px;
-  --shadow-card: 0 12px 32px rgba(73, 96, 76, 0.08);
-  --shadow-hover: 0 16px 40px rgba(73, 96, 76, 0.14);
-}
-
-:root[data-theme="dark"] {
-  color-scheme: dark;
-
-  --color-ink: #f1e9dc;
-  --color-text: #d8d2c7;
-  --color-surface: #191a17;
-  --color-surface-alt: #24251f;
-  --color-accent: #d3ad7d;
-  --color-on-accent: #29251e;
-  --color-accent-dark: #e1c39a;
-  --color-accent-soft: rgba(211, 173, 125, 0.14);
-  --color-secondary: #5b7157;
-  --color-gold-light: #d2ac7c;
-  --color-border: #3b3c34;
-  --color-muted: #a7a697;
-  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.2);
-  --shadow-hover: 0 16px 40px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 12px 32px rgba(11, 16, 74, 0.08);
+  --shadow-hover: 0 16px 40px rgba(11, 16, 74, 0.14);
 }
 
 * {
   box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
 }
@@ -63,10 +40,7 @@ body {
   line-height: 1.6;
 }
 
-h1,
-h2,
-h3,
-h4 {
+h1, h2, h3, h4 {
   font-family: var(--font-display);
   font-weight: 600;
   color: var(--color-ink);
@@ -116,39 +90,11 @@ button {
 /* Soft multi-color wash used behind the hero and page banners */
 .gradient-soft {
   background:
-    radial-gradient(55% 90% at 8% 35%, rgba(211, 173, 125, 0.24) 0%, transparent 62%),
-    radial-gradient(45% 60% at 42% 8%, rgba(210, 172, 124, 0.16) 0%, transparent 62%),
-    radial-gradient(50% 75% at 92% 55%, rgba(208, 222, 206, 0.8) 0%, transparent 66%),
-    radial-gradient(40% 60% at 28% 105%, rgba(127, 139, 120, 0.14) 0%, transparent 62%),
-    var(--color-surface);
-}
-
-:root[data-theme="dark"] .gradient-soft {
-  background:
-    radial-gradient(55% 90% at 8% 35%, rgba(211, 173, 125, 0.16) 0%, transparent 62%),
-    radial-gradient(45% 60% at 42% 8%, rgba(210, 172, 124, 0.08) 0%, transparent 62%),
-    radial-gradient(50% 75% at 92% 55%, rgba(91, 113, 87, 0.2) 0%, transparent 66%),
-    radial-gradient(40% 60% at 28% 105%, rgba(127, 139, 120, 0.08) 0%, transparent 62%),
-    var(--color-surface);
-}
-
-:root[data-theme="dark"] .corporate {
-  background: var(--color-secondary);
-  color: #ffffff;
-}
-
-:root[data-theme="dark"] .corporate h2 {
-  color: #ffffff;
-}
-
-:root[data-theme="dark"] .btn--secondary {
-  background: var(--color-secondary);
-  color: #ffffff;
-}
-
-:root[data-theme="dark"] .btn--secondary:hover {
-  background: var(--color-accent);
-  color: var(--color-surface);
+    radial-gradient(55% 90% at 8% 35%, #fde9d3 0%, transparent 62%),
+    radial-gradient(45% 60% at 42% 8%, #f8f5cc 0%, transparent 62%),
+    radial-gradient(50% 75% at 92% 55%, #dfe2ff 0%, transparent 66%),
+    radial-gradient(40% 60% at 28% 105%, #ffd9d8 0%, transparent 62%),
+    #ffffff;
 }
 
 @media (max-width: 640px) {

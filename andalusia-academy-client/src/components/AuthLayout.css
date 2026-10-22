@@ -12,7 +12,7 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg, 16px);
-  box-shadow: 0 16px 40px rgba(73, 96, 76, 0.08);
+  box-shadow: 0 16px 40px rgba(11, 16, 74, 0.08);
 }
 
 .auth-card h1 {

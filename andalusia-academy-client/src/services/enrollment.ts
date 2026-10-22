@@ -3,7 +3,8 @@ import { postJson } from "./api";
 
 export type ApplicationTarget = { courseId: number } | { programId: number };
 
-export const createApplication = (target: ApplicationTarget) => postJson<Application>("/api/applications", target);
+export const createApplication = (target: ApplicationTarget) =>
+  postJson<Application>("/api/applications", target);
 
 // The API only supports the simulated payment for now.
 export const payApplication = (applicationId: number) =>

@@ -38,8 +38,8 @@ export default function HeroSection() {
             <span className="hero__accent">Learn the skills</span> that get you hired, not just a certificate.
           </h1>
           <p>
-            Andalusia Academy pairs practical, project-based courses with instructors who work in the field, so what you
-            learn in class is what you'll use on the job.
+            Andalusia Academy pairs practical, project-based courses with instructors who work in the
+            field, so what you learn in class is what you'll use on the job.
           </p>
           <form className="hero__search" role="search" onSubmit={handleSearch}>
             <input

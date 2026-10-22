@@ -36,10 +36,7 @@ export default function Checkout() {
 
   return (
     <>
-      <PageBanner
-        title="Checkout"
-        crumbs={[{ label: "My applications", to: "/my-applications" }, { label: "Checkout" }]}
-      />
+      <PageBanner title="Checkout" crumbs={[{ label: "My applications", to: "/my-applications" }, { label: "Checkout" }]} />
       <section className="section">
         <div className="container account">
           {loading && <LoadingState label="Loading your application…" />}
@@ -94,16 +91,7 @@ function EnrolledPanel({ application, justPaid }: { application: Application; ju
   return (
     <div className="account-card success-panel">
       <div className="success-panel__icon" aria-hidden="true">
-        <svg
-          viewBox="0 0 24 24"
-          width="30"
-          height="30"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
           <path d="m5 12 5 5 9-10" />
         </svg>
       </div>
@@ -113,11 +101,11 @@ function EnrolledPanel({ application, justPaid }: { application: Application; ju
         {justPaid && " Your enrollment has been confirmed."}
       </p>
       <div className="account-card__actions">
-        <Link to="/my-courses" className="btn btn--primary">
-          Go to my courses
-        </Link>
-        <Link to="/my-applications" className="btn btn--ghost">
+        <Link to="/my-applications" className="btn btn--primary">
           View my applications
+        </Link>
+        <Link to="/courses" className="btn btn--ghost">
+          Browse more courses
         </Link>
       </div>
     </div>
