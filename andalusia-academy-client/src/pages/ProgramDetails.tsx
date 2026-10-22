@@ -20,10 +20,7 @@ export default function ProgramDetails() {
     <>
       <PageBanner
         title="Program Details"
-        crumbs={[
-          { label: "Programs", to: "/programs" },
-          { label: program?.title ?? "Details" },
-        ]}
+        crumbs={[{ label: "Programs", to: "/programs" }, { label: program?.title ?? "Details" }]}
       />
       <section className="section">
         <div className="container">

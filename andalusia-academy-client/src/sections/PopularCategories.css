@@ -14,7 +14,10 @@
   font-size: 1.05rem;
   color: var(--color-ink);
   text-align: center;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    color 0.25s ease;
 }
 
 .popular-categories__item:hover {

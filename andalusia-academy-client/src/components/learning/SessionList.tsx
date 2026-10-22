@@ -46,7 +46,9 @@ function SessionGroup({
             {location && <span className="session-list__location">{location}</span>}
             <div className="session-list__badges">
               <SessionStatusBadge status={session.status} />
-              {showAttendance && session.status === "completed" && <AttendanceBadge status={session.myAttendanceStatus} />}
+              {showAttendance && session.status === "completed" && (
+                <AttendanceBadge status={session.myAttendanceStatus} />
+              )}
             </div>
           </li>
         ))}

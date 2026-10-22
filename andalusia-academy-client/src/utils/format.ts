@@ -28,3 +28,21 @@ export function formatDate(iso: string): string {
 export function applicationTitle(application: Application): string {
   return application.courseTitle ?? application.programTitle ?? "Application";
 }
+
+export function formatSessionDate(iso: string): string {
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime())
+    ? iso
+    : date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
+
+export function formatTime(value: string): string {
+  // ASP.NET TimeSpan is usually serialized as HH:mm:ss; accept HH:mm too.
+  const match = /^(\d{1,2}):(\d{2})/.exec(value);
+  if (!match) return value;
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}

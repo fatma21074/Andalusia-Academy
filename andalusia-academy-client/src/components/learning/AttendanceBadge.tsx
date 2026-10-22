@@ -23,5 +23,10 @@ const SESSION_LABEL: Record<SessionStatus, string> = {
 };
 
 export function SessionStatusBadge({ status }: { status: SessionStatus }) {
-  return <Badge label={SESSION_LABEL[status]} tone={status === "live" ? "accent" : status === "scheduled" ? "default" : "muted"} />;
+  return (
+    <Badge
+      label={SESSION_LABEL[status]}
+      tone={status === "live" ? "accent" : status === "scheduled" ? "default" : "muted"}
+    />
+  );
 }
