@@ -76,3 +76,15 @@ export default defineConfig([
 ])
 
 ```
+
+## Sprint 4 Frontend role pages
+
+The Sprint 4 role pages are connected to the existing ASP.NET Core endpoints:
+
+- Learner: `/my-courses` and `/learn/:courseId` (`/api/learner/my-courses`, `/api/learner/courses/:courseId`, assignment submission endpoint).
+- Instructor: `/instructor` (`/api/instructor/my-courses`, students, create assignment, load submissions, grade submission).
+- Admin: `/admin` (`/api/admin/users`, create/update/delete courses, public catalog and category list).
+
+The Instructor and Admin routes are role-protected in the frontend; the API remains responsible for authorization. Local development uses `https://localhost:7200` via `.env.development`.
+
+Run `npm install` and `npm run dev` from this folder. Ensure the backend is running and its HTTPS development certificate is trusted. Course creation in the Admin page requires an existing category and a valid Instructor user ID.

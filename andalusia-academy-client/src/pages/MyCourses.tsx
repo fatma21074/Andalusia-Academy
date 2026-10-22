@@ -22,9 +22,13 @@ export default function MyCourses() {
   const apps = applications.data ?? [];
 
   const awaitingPayment = apps.filter((a) => a.status === "pending").length;
-  const programIds = [...new Set(apps.filter((a) => a.status === "approved" && a.programId).map((a) => a.programId as number))];
+  const programIds = [
+    ...new Set(apps.filter((a) => a.status === "approved" && a.programId).map((a) => a.programId as number)),
+  ];
 
-  const averageProgress = items.length ? Math.round(items.reduce((sum, c) => sum + c.progressPercent, 0) / items.length) : 0;
+  const averageProgress = items.length
+    ? Math.round(items.reduce((sum, c) => sum + c.progressPercent, 0) / items.length)
+    : 0;
   const completed = items.filter((c) => c.status === "completed").length;
 
   function retry() {

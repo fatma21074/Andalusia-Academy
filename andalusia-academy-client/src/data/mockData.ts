@@ -4,8 +4,20 @@ import type { Testimonial, Partner } from "../types";
 // Testimonials and partners stay static until the CMS work in the final sprint.
 
 export const testimonials: Testimonial[] = [
-  { id: 1, name: "Fatma", role: "Graduate, Full-Stack Track", quote: "The hands-on projects made the difference — I was job-ready before I finished.", avatar: "/img/avatar1.JPG" },
-  { id: 2, name: "Malak", role: "Graduate, Data Track", quote: "Instructors were available and the material stayed practical throughout.", avatar: "/img/avatar2.jpg" },
+  {
+    id: 1,
+    name: "Fatma",
+    role: "Graduate, Full-Stack Track",
+    quote: "The hands-on projects made the difference — I was job-ready before I finished.",
+    avatar: "/img/avatar1.JPG",
+  },
+  {
+    id: 2,
+    name: "Malak",
+    role: "Graduate, Data Track",
+    quote: "Instructors were available and the material stayed practical throughout.",
+    avatar: "/img/avatar2.jpg",
+  },
 ];
 
 export const partners: Partner[] = [

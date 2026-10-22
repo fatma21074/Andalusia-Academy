@@ -21,9 +21,7 @@ export default function Contact() {
           <div className="contact-page__layout">
             <div className="contact-page__form-col">
               {submitted ? (
-                <p className="contact-page__success">
-                  Thanks — your message has been sent. We'll reply soon.
-                </p>
+                <p className="contact-page__success">Thanks — your message has been sent. We'll reply soon.</p>
               ) : (
                 <form className="contact-page__form" onSubmit={handleSubmit}>
                   <div className="contact-page__field">

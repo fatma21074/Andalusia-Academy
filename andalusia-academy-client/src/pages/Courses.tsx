@@ -84,7 +84,6 @@ export default function Courses() {
       <PageBanner title="All Courses" crumbs={[{ label: "Courses" }]} />
       <section className="section">
         <div className="container">
-
           <div className="catalog-filters">
             <SearchBox
               label="Search"
@@ -131,7 +130,9 @@ export default function Courses() {
           {result && result.data.length === 0 && (
             <EmptyState
               title="No courses found"
-              message={hasFilters ? "Try a different search or remove some filters." : "New courses will appear here soon."}
+              message={
+                hasFilters ? "Try a different search or remove some filters." : "New courses will appear here soon."
+              }
               action={
                 hasFilters ? (
                   <Button variant="ghost" onClick={clearFilters}>

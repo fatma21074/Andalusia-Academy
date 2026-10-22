@@ -5,6 +5,12 @@
   color: var(--color-accent);
 }
 
+.logo__icon {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
 .logo__text {
   font-family: var(--font-display);
   font-size: 1.6rem;
