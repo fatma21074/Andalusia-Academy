@@ -1,0 +1,42 @@
+.course-learn__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.course-learn__header .detail__title {
+  margin-bottom: 4px;
+}
+
+.course-learn__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 260px;
+}
+
+.course-learn__progress .badge {
+  align-self: flex-start;
+}
+
+.course-learn__back {
+  text-align: center;
+}
+
+.course-learn__back a {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .course-learn__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .course-learn__progress {
+    min-width: 0;
+  }
+}
