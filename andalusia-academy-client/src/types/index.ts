@@ -128,58 +128,6 @@ export interface Payment {
   paidAt: string | null;
 }
 
-// ---- Learner dashboard (Sprint 4) ----
-
-export interface MyCourse {
-  courseId: number;
-  title: string;
-  status: string;
-  enrolledAt: string;
-  progressPercent: number;
-}
-
-export type SessionStatus = "scheduled" | "live" | "completed" | "cancelled";
-export type AttendanceStatus = "present" | "late" | "absent" | "excused";
-
-export interface SessionInfo {
-  id: number;
-  sessionDate: string;
-  startTime: string;
-  endTime: string;
-  status: SessionStatus;
-  myAttendanceStatus: AttendanceStatus | null;
-}
-
-export interface AssignmentInfo {
-  id: number;
-  title: string;
-  description: string | null;
-  dueDate: string | null;
-  mySubmissionStatus: "submitted" | "graded" | null;
-  myScore: number | null;
-}
-
-export interface MaterialInfo {
-  id: number;
-  title: string;
-  type: "link" | "file";
-  url: string;
-}
-
-export interface CourseLearning {
-  courseId: number;
-  title: string;
-  location: string | null;
-  schedule: string | null;
-  instructorName: string;
-  materials: MaterialInfo[];
-  sessions: SessionInfo[];
-  assignments: AssignmentInfo[];
-  progressPercent: number;
-}
-
-// ---- Static homepage content (no API for these yet — CMS comes in the final sprint) ----
-
 export interface Testimonial {
   id: number;
   name: string;
@@ -192,4 +140,94 @@ export interface Partner {
   id: number;
   name: string;
   logo: string;
+}
+
+// ---- Learning (Sprint 4) ----
+export type AttendanceStatus = "present" | "late" | "absent" | "excused";
+export type SessionStatus = "scheduled" | "live" | "completed" | "cancelled";
+export interface MyCourse {
+  courseId: number;
+  title: string;
+  status: string;
+  enrolledAt: string;
+  progressPercent: number;
+}
+export interface MaterialInfo {
+  id: number;
+  title: string;
+  type: "link" | "file";
+  url: string;
+}
+export interface SessionInfo {
+  id: number;
+  sessionDate: string;
+  startTime: string;
+  endTime: string;
+  status: SessionStatus;
+  myAttendanceStatus: AttendanceStatus | null;
+}
+export interface AssignmentInfo {
+  id: number;
+  title: string;
+  description: string | null;
+  dueDate: string | null;
+  mySubmissionStatus: "submitted" | "graded" | null;
+  myScore: number | null;
+}
+export interface CourseLearning {
+  courseId: number;
+  title: string;
+  location: string | null;
+  schedule: string | null;
+  instructorName: string;
+  materials: MaterialInfo[];
+  sessions: SessionInfo[];
+  assignments: AssignmentInfo[];
+  progressPercent: number;
+}
+export interface InstructorCourse {
+  courseId: number;
+  title: string;
+  status: string;
+  studentCount: number;
+}
+export interface EnrolledStudent {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  enrolledAt: string;
+}
+export interface InstructorSubmission {
+  id: number;
+  userId: number;
+  studentName: string;
+  fileUrl: string | null;
+  submittedAt: string;
+  status: string;
+  score: number | null;
+  feedback: string | null;
+}
+export interface AdminUser {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  createdAt: string;
+}
+
+/** Assumed shape of GET /api/instructor/courses/{id}/assignments (endpoint to be added by the backend). */
+export interface InstructorAssignment {
+  id: number;
+  title: string;
+  dueDate: string | null;
+}
+
+/** Assumed shape of GET /api/admin/instructors. `instructorId` is Instructor.Id (what Course.InstructorId points at), not User.Id. */
+export interface AdminInstructor {
+  instructorId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
 }

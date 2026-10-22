@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
-import { redirectTarget } from "../auth/redirect";
+import { defaultHome, redirectTarget } from "../auth/redirect";
 import { ApiError } from "../services/api";
 import { emailProblem, onlyProblems, passwordProblem, requiredProblem } from "../utils/validation";
 import Alert from "../components/Alert";
@@ -27,8 +27,7 @@ export default function Register() {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const destination = redirectTarget(location.state, "/");
-  if (user) return <Navigate to={destination} replace />;
+  if (user) return <Navigate to={redirectTarget(location.state, defaultHome(user.role))} replace />;
 
   const set = (field: keyof typeof values) => (value: string) => setValues((v) => ({ ...v, [field]: value }));
 
@@ -72,7 +71,10 @@ export default function Register() {
       subtitle="Join Andalusia Academy and start learning today."
       footer={
         <>
-          Already have an account? <Link to="/login" state={location.state}>Sign in</Link>
+          Already have an account?{" "}
+          <Link to="/login" state={location.state}>
+            Sign in
+          </Link>
         </>
       }
     >

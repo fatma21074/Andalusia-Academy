@@ -248,7 +248,7 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg, 12px);
-  box-shadow: 0 12px 32px rgba(11, 16, 74, 0.06);
+  box-shadow: 0 12px 32px rgba(73, 96, 76, 0.06);
 }
 
 .enrollment-card h3 {

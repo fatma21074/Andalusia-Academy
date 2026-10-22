@@ -44,7 +44,9 @@ export default function ProgramProgress({ programId, enrollments }: ProgramProgr
         {courses.map(({ course, enrollment }) => (
           <li key={course.id}>
             {enrollment ? <Link to={`/learn/${course.id}`}>{course.title}</Link> : course.title}
-            <span className="learning-muted">{enrollment ? `${enrollment.progressPercent}%` : "Not available yet"}</span>
+            <span className="learning-muted">
+              {enrollment ? `${enrollment.progressPercent}%` : "Not available yet"}
+            </span>
           </li>
         ))}
       </ul>

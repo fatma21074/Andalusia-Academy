@@ -36,7 +36,6 @@ export default function Programs() {
       <PageBanner title="All Programs" crumbs={[{ label: "Programs" }]} />
       <section className="section">
         <div className="container">
-
           <div className="catalog-filters">
             <SearchBox
               label="Search"

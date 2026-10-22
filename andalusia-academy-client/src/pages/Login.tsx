@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
-import { redirectTarget } from "../auth/redirect";
+import { defaultHome, redirectTarget } from "../auth/redirect";
 import { ApiError } from "../services/api";
 import { emailProblem, onlyProblems, requiredProblem } from "../utils/validation";
 import Alert from "../components/Alert";
@@ -18,8 +18,7 @@ export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const destination = redirectTarget(location.state, "/");
-  if (user) return <Navigate to={destination} replace />;
+  if (user) return <Navigate to={redirectTarget(location.state, defaultHome(user.role))} replace />;
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -48,7 +47,10 @@ export default function Login() {
       subtitle="Sign in to continue your learning."
       footer={
         <>
-          New to Andalusia? <Link to="/register" state={location.state}>Create an account</Link>
+          New to Andalusia?{" "}
+          <Link to="/register" state={location.state}>
+            Create an account
+          </Link>
         </>
       }
     >

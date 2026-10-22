@@ -63,6 +63,11 @@ export default function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
           {user.role === "Learner" && (
             <>
               <li role="none">
+                <Link role="menuitem" to="/my-courses" onClick={close}>
+                  My courses
+                </Link>
+              </li>
+              <li role="none">
                 <Link role="menuitem" to="/my-applications" onClick={close}>
                   My applications
                 </Link>
@@ -73,6 +78,20 @@ export default function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
                 </Link>
               </li>
             </>
+          )}
+          {user.role === "Instructor" && (
+            <li role="none">
+              <Link role="menuitem" to="/instructor" onClick={close}>
+                Instructor dashboard
+              </Link>
+            </li>
+          )}
+          {user.role === "Admin" && (
+            <li role="none">
+              <Link role="menuitem" to="/admin" onClick={close}>
+                Admin dashboard
+              </Link>
+            </li>
           )}
           <li role="none">
             <button type="button" role="menuitem" onClick={handleLogout}>

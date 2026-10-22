@@ -1,0 +1,137 @@
+.dashboard {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.dashboard__messages {
+  display: grid;
+  gap: 0.75rem;
+  outline: none;
+}
+
+.dashboard__messages:empty {
+  display: none;
+}
+
+.dashboard__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.dashboard__panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
+}
+
+.dashboard__panel h2 {
+  margin: 0 0 1rem;
+}
+
+.dashboard__muted {
+  color: var(--color-muted);
+}
+
+.dashboard__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.dashboard__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.course-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.75rem;
+}
+
+.course-picker__item {
+  display: grid;
+  gap: 0.35rem;
+  text-align: left;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: inherit;
+}
+
+.course-picker__item span {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.course-picker__item[aria-pressed="true"] {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.dashboard-form {
+  display: grid;
+  gap: 1rem;
+  max-width: 760px;
+}
+
+.dashboard-form--grid {
+  max-width: none;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dashboard-form--inline {
+  display: flex;
+  align-items: end;
+  gap: 0.75rem;
+}
+
+.dashboard-form__wide {
+  grid-column: 1 / -1;
+}
+
+.dashboard-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-self: start;
+}
+
+.grade-form {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 520px;
+  padding: 0.5rem 0;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.cell-note {
+  display: block;
+  color: var(--color-muted);
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 640px) {
+  .dashboard-form--grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-form__wide {
+    grid-column: auto;
+  }
+
+  .dashboard-form--inline {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

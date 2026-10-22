@@ -18,6 +18,10 @@ import Profile from "./pages/Profile";
 import MyApplications from "./pages/MyApplications";
 import MyPayments from "./pages/MyPayments";
 import Checkout from "./pages/Checkout";
+import MyCourses from "./pages/MyCourses";
+import CourseLearn from "./pages/CourseLearn";
+import InstructorDashboard from "./pages/InstructorDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 
 export default function App() {
   return (
@@ -47,8 +51,18 @@ export default function App() {
             {/* Learners only */}
             <Route element={<ProtectedRoute roles={["Learner"]} />}>
               <Route path="/my-applications" element={<MyApplications />} />
+              <Route path="/my-courses" element={<MyCourses />} />
+              <Route path="/learn/:courseId" element={<CourseLearn />} />
               <Route path="/my-payments" element={<MyPayments />} />
               <Route path="/checkout/:applicationId" element={<Checkout />} />
+            </Route>
+
+            <Route element={<ProtectedRoute roles={["Instructor"]} />}>
+              <Route path="/instructor" element={<InstructorDashboard />} />
+            </Route>
+
+            <Route element={<ProtectedRoute roles={["Admin"]} />}>
+              <Route path="/admin" element={<AdminDashboard />} />
             </Route>
 
             <Route path="*" element={<Home />} />
