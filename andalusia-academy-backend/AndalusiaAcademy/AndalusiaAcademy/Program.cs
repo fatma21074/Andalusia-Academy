@@ -7,6 +7,7 @@ using Application.Repositories;
 using Application.Services;
 using Application.Mapping;
 using Application.Auth;
+using Application.Integrations;
 using AndalusiaAcademy.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+// Kashier settings + typed HttpClient
+builder.Services.Configure<KashierSettings>(builder.Configuration.GetSection("Kashier"));
+builder.Services.AddHttpClient<IKashierClient, KashierClient>();
+
 // CORS: allow the React dev server to call the API
 builder.Services.AddCors(options =>
 {
@@ -70,9 +75,9 @@ builder.Services.AddScoped<ApplicationService>();
 builder.Services.AddScoped<PaymentService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<LearnerService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<InstructorService>();
 builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

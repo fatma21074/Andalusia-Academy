@@ -17,6 +17,8 @@ namespace Domain.Models
 
         public string Status { get; set; } = "pending"; // pending | paid | failed
 
+        public string? SessionId { get; set; } // Kashier's session id, set once checkout is initiated
+
         public string? Method { get; set; }             // gateway or agreed simulation
 
         public DateTime? PaidAt { get; set; }

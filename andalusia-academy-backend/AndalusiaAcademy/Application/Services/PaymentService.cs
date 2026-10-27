@@ -2,6 +2,7 @@ using Domain.Models;
 using Application.DTOs;
 using Application.Common;
 using Application.Repositories;
+using Application.Integrations;
 
 namespace Application.Services
 {
@@ -11,44 +12,90 @@ namespace Application.Services
         private readonly IPaymentRepository _paymentRepo;
         private readonly IEnrollmentRepository _enrollmentRepo;
         private readonly IProgramRepository _programRepo;
+        private readonly IKashierClient _kashier;
 
         public PaymentService(
             IApplicationRepository appRepo,
             IPaymentRepository paymentRepo,
             IEnrollmentRepository enrollmentRepo,
-            IProgramRepository programRepo)
+            IProgramRepository programRepo,
+            IKashierClient kashier)
         {
             _appRepo = appRepo;
             _paymentRepo = paymentRepo;
             _enrollmentRepo = enrollmentRepo;
             _programRepo = programRepo;
+            _kashier = kashier;
         }
 
-        public async Task<OperationResult<PaymentDto>> PayAsync(int userId, CreatePaymentDto request)
+        // Starts a real checkout. callbackBaseUrl is OUR OWN backend's address (e.g. http://localhost:5120) —
+        // the controller supplies it from the current request, so this works unchanged in dev or once deployed.
+        public async Task<OperationResult<string>> StartCheckoutAsync(int userId, CreatePaymentDto request, string customerEmail, string callbackBaseUrl)
         {
             var application = await _appRepo.GetByIdAsync(request.ApplicationId);
             if (application is null || application.UserId != userId)
-                return OperationResult<PaymentDto>.Fail(OperationStatus.NotFound, "Application not found.");
+                return OperationResult<string>.Fail(OperationStatus.NotFound, "Application not found.");
 
             if (application.Payment is not null)
-                return OperationResult<PaymentDto>.Fail(OperationStatus.Conflict, "This application has already been paid.");
+                return OperationResult<string>.Fail(OperationStatus.Conflict, "This application has already been paid.");
 
             decimal amount = application.Course?.Price ?? application.Program?.Price
                 ?? throw new InvalidOperationException("Application has neither a course nor a program.");
 
-            // Self-service simulation: payment succeeds immediately, no gateway round-trip.
             var payment = new Payment
             {
                 ApplicationId = application.Id,
                 Amount = amount,
-                Status = "paid",
-                Method = request.Method,
-                PaidAt = DateTime.UtcNow
+                Status = "pending",
+                Method = "kashier"
             };
+            await _paymentRepo.AddAsync(payment); // mints payment.Id
 
-            application.Status = "approved"; // tracked by EF Core — saved below, same DbContext
+            // Our own route param — never Kashier's redirect query string — is what the callback trusts to look the payment up.
+            var redirectUrl = $"{callbackBaseUrl}/api/payments/kashier-callback?paymentId={payment.Id}";
+
+            var session = await _kashier.CreateSessionAsync(
+                orderId: $"andalusia-{payment.Id}",
+                amount: amount,
+                customerEmail: customerEmail,
+                redirectUrl: redirectUrl);
+
+            payment.SessionId = session.SessionId;
+            await _paymentRepo.SaveChangesAsync();
+
+            return OperationResult<string>.Ok(session.SessionUrl);
+        }
+
+        // Called from the callback once the learner returns from Kashier's checkout.
+        // paymentId comes from OUR OWN redirect URL above, not from anything Kashier sent — it is
+        // only ever used to look the payment up; the actual confirmation is the VerifySessionAsync call below.
+        public async Task<OperationResult<PaymentDto>> ConfirmCheckoutAsync(int paymentId)
+        {
+            var payment = await _paymentRepo.GetByIdAsync(paymentId);
+            if (payment is null || payment.SessionId is null)
+                return OperationResult<PaymentDto>.Fail(OperationStatus.NotFound, "No payment found.");
+
+            if (payment.Status == "paid")
+                return OperationResult<PaymentDto>.Ok(ToDto(payment)); // already confirmed — safe to re-visit this page
+
+            var verify = await _kashier.VerifySessionAsync(payment.SessionId);
+            if (!verify.Success)
+            {
+                payment.Status = "failed";
+                await _paymentRepo.SaveChangesAsync();
+                return OperationResult<PaymentDto>.Fail(OperationStatus.BadRequest, "Payment was not successful.");
+            }
+
+            var application = await _appRepo.GetByIdAsync(payment.ApplicationId);
+            if (application is null)
+                return OperationResult<PaymentDto>.Fail(OperationStatus.NotFound, "Application not found.");
+
+            payment.Status = "paid";
+            payment.PaidAt = DateTime.UtcNow;
+            application.Status = "approved";
 
             var newEnrollments = new List<Enrollment>();
+            var userId = application.UserId;
 
             if (application.CourseId.HasValue)
             {
@@ -56,10 +103,8 @@ namespace Application.Services
                 {
                     newEnrollments.Add(new Enrollment
                     {
-                        ApplicationId = application.Id,
-                        UserId = userId,
-                        CourseId = application.CourseId.Value,
-                        Status = "active"
+                        ApplicationId = application.Id, UserId = userId,
+                        CourseId = application.CourseId.Value, Status = "active"
                     });
                 }
             }
@@ -72,42 +117,30 @@ namespace Application.Services
                     {
                         newEnrollments.Add(new Enrollment
                         {
-                            ApplicationId = application.Id,
-                            UserId = userId,
-                            CourseId = pc.CourseId,
-                            Status = "active"
+                            ApplicationId = application.Id, UserId = userId,
+                            CourseId = pc.CourseId, Status = "active"
                         });
                     }
                 }
             }
 
-            await _paymentRepo.AddAsync(payment);       // also persists application.Status (same tracked DbContext)
+            await _paymentRepo.SaveChangesAsync();
             if (newEnrollments.Count > 0)
                 await _enrollmentRepo.AddRangeAsync(newEnrollments);
 
-            return OperationResult<PaymentDto>.Ok(new PaymentDto
-            {
-                Id = payment.Id,
-                ApplicationId = payment.ApplicationId,
-                Amount = payment.Amount,
-                Status = payment.Status,
-                Method = payment.Method,
-                PaidAt = payment.PaidAt
-            });
+            return OperationResult<PaymentDto>.Ok(ToDto(payment));
         }
 
         public async Task<List<PaymentDto>> GetMyPaymentsAsync(int userId)
         {
             var payments = await _paymentRepo.GetByUserIdAsync(userId);
-            return payments.Select(p => new PaymentDto
-            {
-                Id = p.Id,
-                ApplicationId = p.ApplicationId,
-                Amount = p.Amount,
-                Status = p.Status,
-                Method = p.Method,
-                PaidAt = p.PaidAt
-            }).ToList();
+            return payments.Select(ToDto).ToList();
         }
+
+        private static PaymentDto ToDto(Payment p) => new()
+        {
+            Id = p.Id, ApplicationId = p.ApplicationId, Amount = p.Amount,
+            Status = p.Status, Method = p.Method, PaidAt = p.PaidAt
+        };
     }
 }

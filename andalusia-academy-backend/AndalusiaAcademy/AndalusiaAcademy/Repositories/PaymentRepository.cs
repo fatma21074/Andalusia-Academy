@@ -19,10 +19,21 @@ namespace AndalusiaAcademy.Repositories
                 .ToListAsync();
         }
 
+        public async Task<Payment?> GetBySessionIdAsync(string sessionId)
+        {
+            return await _context.Payments.FirstOrDefaultAsync(p => p.SessionId == sessionId);
+        }
+
         public async Task AddAsync(Payment payment)
         {
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
         }
+                public async Task<Payment?> GetByIdAsync(int id)
+        {
+            return await _context.Payments.FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
     }
 }
