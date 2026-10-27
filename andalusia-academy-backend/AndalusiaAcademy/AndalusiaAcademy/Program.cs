@@ -45,6 +45,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.Configure<KashierSettings>(builder.Configuration.GetSection("Kashier"));
 builder.Services.AddHttpClient<IKashierClient, KashierClient>();
 
+// Email settings + sender
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
+
 // CORS: allow the React dev server to call the API
 builder.Services.AddCors(options =>
 {
@@ -68,6 +72,7 @@ builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<ITestimonialRepository, TestimonialRepository>();
 builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
 builder.Services.AddScoped<IFaqRepository, FaqRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 // Services
 builder.Services.AddScoped<CourseService>();
@@ -80,10 +85,11 @@ builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<LearnerService>();
 builder.Services.AddScoped<InstructorService>();
 builder.Services.AddScoped<AdminService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<TestimonialService>();
 builder.Services.AddScoped<PartnerService>();
 builder.Services.AddScoped<FaqService>();
+builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

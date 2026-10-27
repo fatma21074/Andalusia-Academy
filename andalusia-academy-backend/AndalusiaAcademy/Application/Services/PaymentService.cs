@@ -8,24 +8,30 @@ namespace Application.Services
 {
     public class PaymentService
     {
-        private readonly IApplicationRepository _appRepo;
+               private readonly IApplicationRepository _appRepo;
         private readonly IPaymentRepository _paymentRepo;
         private readonly IEnrollmentRepository _enrollmentRepo;
         private readonly IProgramRepository _programRepo;
+        private readonly IUserRepository _userRepo;
         private readonly IKashierClient _kashier;
+        private readonly NotificationService _notifications;
 
         public PaymentService(
             IApplicationRepository appRepo,
             IPaymentRepository paymentRepo,
             IEnrollmentRepository enrollmentRepo,
             IProgramRepository programRepo,
-            IKashierClient kashier)
+            IUserRepository userRepo,
+            IKashierClient kashier,
+            NotificationService notifications)
         {
             _appRepo = appRepo;
             _paymentRepo = paymentRepo;
             _enrollmentRepo = enrollmentRepo;
             _programRepo = programRepo;
+            _userRepo = userRepo;
             _kashier = kashier;
+            _notifications = notifications;
         }
 
         // Starts a real checkout. callbackBaseUrl is OUR OWN backend's address (e.g. http://localhost:5120) —
@@ -127,6 +133,16 @@ namespace Application.Services
             await _paymentRepo.SaveChangesAsync();
             if (newEnrollments.Count > 0)
                 await _enrollmentRepo.AddRangeAsync(newEnrollments);
+
+            var user = await _userRepo.GetByIdAsync(userId);
+            if (user is not null)
+            {
+                await _notifications.NotifyAsync(
+                    user, "payment", "Payment confirmed",
+                    $"Payment of {payment.Amount:F2} EGP confirmed.",
+                    "Payment confirmed",
+                    $"Your payment of <strong>{payment.Amount:F2} EGP</strong> was successful. You're now enrolled — head to My Courses to get started.");
+            }
 
             return OperationResult<PaymentDto>.Ok(ToDto(payment));
         }

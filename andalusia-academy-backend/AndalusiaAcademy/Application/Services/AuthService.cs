@@ -9,11 +9,13 @@ namespace Application.Services
     {
         private readonly IUserRepository _userRepo;
         private readonly ITokenService _tokenService;
+        private readonly NotificationService _notifications;
 
-        public AuthService(IUserRepository userRepo, ITokenService tokenService)
+        public AuthService(IUserRepository userRepo, ITokenService tokenService, NotificationService notifications)
         {
             _userRepo = userRepo;
             _tokenService = tokenService;
+            _notifications = notifications;
         }
 
         public async Task<AuthResponseDto?> RegisterAsync(RegisterRequestDto request)
@@ -37,6 +39,11 @@ namespace Application.Services
             };
 
             await _userRepo.AddUserAsync(user);
+                        await _notifications.NotifyAsync(
+                user, "registration", "Welcome to Andalusia Academy",
+                "Account created successfully.",
+                $"Welcome, {user.FirstName}!",
+                "Your account has been created. You can now browse courses, programs, and career paths, and apply whenever you're ready.");
 
             return new AuthResponseDto
             {
