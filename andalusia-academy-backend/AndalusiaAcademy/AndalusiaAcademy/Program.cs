@@ -65,6 +65,9 @@ builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ILearnerRepository, LearnerRepository>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+builder.Services.AddScoped<ITestimonialRepository, TestimonialRepository>();
+builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
+builder.Services.AddScoped<IFaqRepository, FaqRepository>();
 
 // Services
 builder.Services.AddScoped<CourseService>();
@@ -78,6 +81,9 @@ builder.Services.AddScoped<LearnerService>();
 builder.Services.AddScoped<InstructorService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<TestimonialService>();
+builder.Services.AddScoped<PartnerService>();
+builder.Services.AddScoped<FaqService>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
