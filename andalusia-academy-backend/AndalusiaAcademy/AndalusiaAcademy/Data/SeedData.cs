@@ -103,6 +103,26 @@ namespace AndalusiaAcademy.Data
                 new CareerPathProgram { CareerPath = dataCareerPath, Program = dataProgram }
             );
             await context.SaveChangesAsync();
+                        // ---- Testimonials ----
+            context.Testimonials.AddRange(
+                new Testimonial { User = userSara, Quote = "This program gave me the structure I needed to actually finish projects, not just start them.", DisplayRole = "Graduate, Frontend Track", IsPublished = true },
+                new Testimonial { User = userOmar, Quote = "The data science track pushed me from tutorials straight into real, messy datasets.", DisplayRole = "Graduate, Data Science Track", IsPublished = true }
+            );
+
+            // ---- Partners ----
+            context.Partners.AddRange(
+                new Partner { Name = "Nile Tech Solutions", LogoUrl = "https://example.com/logos/nile-tech.png", WebsiteUrl = "https://example.com", IsPublished = true },
+                new Partner { Name = "Alexandria Digital Hub", LogoUrl = "https://example.com/logos/adh.png", WebsiteUrl = "https://example.com", IsPublished = true }
+            );
+
+            // ---- FAQs ----
+            context.Faqs.AddRange(
+                new Faq { Question = "Do I need prior experience to enroll?", Answer = "No — most of our programs are designed for beginners, though some advanced tracks list recommended background in their description.", DisplayOrder = 1, IsPublished = true },
+                new Faq { Question = "Are courses available online or in person?", Answer = "Most courses are currently offline, held at our Cairo and Alexandria branches. Each course listing shows its location.", DisplayOrder = 2, IsPublished = true },
+                new Faq { Question = "What happens after I apply to a course?", Answer = "You'll complete payment, and your enrollment is confirmed automatically — no separate approval step.", DisplayOrder = 3, IsPublished = true }
+            );
+
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -10,15 +10,21 @@ namespace Application.Services
         private readonly IApplicationRepository _appRepo;
         private readonly ICourseRepository _courseRepo;
         private readonly IProgramRepository _programRepo;
+        private readonly IUserRepository _userRepo;
+        private readonly NotificationService _notifications;
 
         public ApplicationService(
             IApplicationRepository appRepo,
             ICourseRepository courseRepo,
-            IProgramRepository programRepo)
+            IProgramRepository programRepo,
+            IUserRepository userRepo,
+            NotificationService notifications)
         {
             _appRepo = appRepo;
             _courseRepo = courseRepo;
             _programRepo = programRepo;
+            _userRepo = userRepo;
+            _notifications = notifications;
         }
 
         public async Task<OperationResult<ApplicationDto>> CreateAsync(int userId, CreateApplicationDto request)
@@ -62,6 +68,16 @@ namespace Application.Services
                 Status = "pending"
             };
             await _appRepo.AddAsync(application);
+            var user = await _userRepo.GetByIdAsync(userId);
+            if (user is not null)
+            {
+                var itemName = courseTitle ?? programTitle ?? "your application";
+                await _notifications.NotifyAsync(
+                    user, "application", "Application received",
+                    $"Application submitted for {itemName}.",
+                    "Application received",
+                    $"We've received your application for <strong>{itemName}</strong>. Complete payment to confirm your spot.");
+            }
 
             return OperationResult<ApplicationDto>.Ok(new ApplicationDto
             {
