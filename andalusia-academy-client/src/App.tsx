@@ -22,6 +22,9 @@ import MyCourses from "./pages/MyCourses";
 import CourseLearn from "./pages/CourseLearn";
 import InstructorDashboard from "./pages/InstructorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminContent from "./pages/AdminContent";
+import CheckoutResult from "./pages/CheckoutResult";
+import Notifications from "./pages/Notifications";
 
 export default function App() {
   return (
@@ -46,6 +49,7 @@ export default function App() {
             {/* Any signed-in user */}
             <Route element={<ProtectedRoute />}>
               <Route path="/profile" element={<Profile />} />
+              <Route path="/notifications" element={<Notifications />} />
             </Route>
 
             {/* Learners only */}
@@ -54,6 +58,7 @@ export default function App() {
               <Route path="/my-courses" element={<MyCourses />} />
               <Route path="/learn/:courseId" element={<CourseLearn />} />
               <Route path="/my-payments" element={<MyPayments />} />
+              <Route path="/checkout/result" element={<CheckoutResult />} />
               <Route path="/checkout/:applicationId" element={<Checkout />} />
             </Route>
 
@@ -63,6 +68,7 @@ export default function App() {
 
             <Route element={<ProtectedRoute roles={["Admin"]} />}>
               <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/content" element={<AdminContent />} />
             </Route>
 
             <Route path="*" element={<Home />} />
