@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import AsyncView from "../components/dashboard/AsyncView";
 import CourseForm from "../components/dashboard/CourseForm";
 import CoursesTable from "../components/dashboard/CoursesTable";
@@ -21,11 +22,21 @@ import {
 } from "../services/admin";
 import { ApiError, getJson } from "../services/api";
 import { categoriesUrl, courseUrl, coursesUrl } from "../services/catalog";
-import type { AdminInstructor, AdminUser, Category, Course, CourseDetail, PagedResult } from "../types";
+import type {
+  AdminInstructor,
+  AdminUser,
+  Category,
+  Course,
+  CourseDetail,
+  PagedResult,
+} from "../types";
 import "../components/dashboard/Dashboard.css";
 
 const PAGE_SIZE = 10;
-const STATUS_OPTIONS = [{ value: "", label: "All statuses" }, ...COURSE_STATUSES];
+const STATUS_OPTIONS = [
+  { value: "", label: "All statuses" },
+  ...COURSE_STATUSES,
+];
 
 export default function AdminDashboard() {
   const [page, setPage] = useState(1);
@@ -40,7 +51,11 @@ export default function AdminDashboard() {
   // Until the backend adds this endpoint, `instructors.data` stays empty and the form asks for a typed ID.
   const instructors = useApi<AdminInstructor[]>(adminInstructorsUrl());
   const courses = useApi<PagedResult<Course>>(
-    coursesUrl({ page, pageSize: PAGE_SIZE, status: statusFilter || undefined }),
+    coursesUrl({
+      page,
+      pageSize: PAGE_SIZE,
+      status: statusFilter || undefined,
+    }),
   );
 
   function changeFilter(value: string) {
@@ -48,7 +63,11 @@ export default function AdminDashboard() {
     setPage(1);
   }
 
-  async function run(action: () => Promise<void>, success: string, fallback: string): Promise<boolean> {
+  async function run(
+    action: () => Promise<void>,
+    success: string,
+    fallback: string,
+  ): Promise<boolean> {
     setSaving(true);
     setError("");
     setNotice("");
@@ -95,31 +114,67 @@ export default function AdminDashboard() {
     try {
       setEditing(await getJson<CourseDetail>(courseUrl(course.id)));
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Could not load the course.");
+      setError(
+        e instanceof ApiError ? e.message : "Could not load the course.",
+      );
     }
   }
 
-  const instructorCount = users.data?.filter((user) => user.role === "Instructor").length;
+  const instructorCount = users.data?.filter(
+    (user) => user.role === "Instructor",
+  ).length;
 
   return (
     <>
-      <PageBanner title="Admin Dashboard" crumbs={[{ label: "Administration" }]} />
+      <PageBanner
+        title="Admin Dashboard"
+        crumbs={[{ label: "Administration" }]}
+      />
       <section className="section">
         <div className="container dashboard">
           <StatusMessages error={error} notice={notice} />
 
+          <p>
+            <Link to="/admin/content" className="btn btn--secondary">
+              Manage website content
+            </Link>
+          </p>
+
           <div className="dashboard__stats">
-            <StatCard icon="grid" tone="indigo" label="Registered users" value={users.data?.length} />
-            <StatCard icon="cap" tone="teal" label="Instructors" value={instructorCount} />
-            <StatCard icon="book" tone="coral" label="Courses in catalog" value={courses.data?.totalCount} />
+            <StatCard
+              icon="grid"
+              tone="indigo"
+              label="Registered users"
+              value={users.data?.length}
+            />
+            <StatCard
+              icon="cap"
+              tone="teal"
+              label="Instructors"
+              value={instructorCount}
+            />
+            <StatCard
+              icon="book"
+              tone="coral"
+              label="Courses in catalog"
+              value={courses.data?.totalCount}
+            />
           </div>
 
-          <section className="dashboard__panel" aria-labelledby="course-form-heading">
-            <h2 id="course-form-heading">{editing ? `Edit “${editing.title}”` : "Create course"}</h2>
+          <section
+            className="dashboard__panel"
+            aria-labelledby="course-form-heading"
+          >
+            <h2 id="course-form-heading">
+              {editing ? `Edit “${editing.title}”` : "Create course"}
+            </h2>
             <AsyncView
               query={categories}
               loadingLabel="Loading categories…"
-              empty={{ title: "No categories", message: "Add a category before creating courses." }}
+              empty={{
+                title: "No categories",
+                message: "Add a category before creating courses.",
+              }}
             >
               {(list) => (
                 <CourseForm
@@ -135,21 +190,41 @@ export default function AdminDashboard() {
             </AsyncView>
           </section>
 
-          <section className="dashboard__panel" aria-labelledby="courses-heading">
+          <section
+            className="dashboard__panel"
+            aria-labelledby="courses-heading"
+          >
             <h2 id="courses-heading">Manage courses</h2>
             <div className="dashboard__filters">
-              <SelectField label="Status" value={statusFilter} options={STATUS_OPTIONS} onChange={changeFilter} />
+              <SelectField
+                label="Status"
+                value={statusFilter}
+                options={STATUS_OPTIONS}
+                onChange={changeFilter}
+              />
             </div>
             <AsyncView
               query={courses}
               loadingLabel="Loading courses…"
               isEmpty={(result) => result.data.length === 0}
-              empty={{ title: "No courses found", message: "Try a different status filter." }}
+              empty={{
+                title: "No courses found",
+                message: "Try a different status filter.",
+              }}
             >
               {(result) => (
                 <>
-                  <CoursesTable courses={result.data} busy={saving} onEdit={startEditing} onDelete={removeCourse} />
-                  <Pagination page={result.page} totalPages={result.totalPages} onChange={setPage} />
+                  <CoursesTable
+                    courses={result.data}
+                    busy={saving}
+                    onEdit={startEditing}
+                    onDelete={removeCourse}
+                  />
+                  <Pagination
+                    page={result.page}
+                    totalPages={result.totalPages}
+                    onChange={setPage}
+                  />
                 </>
               )}
             </AsyncView>
@@ -157,7 +232,11 @@ export default function AdminDashboard() {
 
           <section className="dashboard__panel" aria-labelledby="users-heading">
             <h2 id="users-heading">Users</h2>
-            <AsyncView query={users} loadingLabel="Loading users…" empty={{ title: "No users yet" }}>
+            <AsyncView
+              query={users}
+              loadingLabel="Loading users…"
+              empty={{ title: "No users yet" }}
+            >
               {(list) => <UsersTable users={list} />}
             </AsyncView>
           </section>

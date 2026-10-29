@@ -37,8 +37,19 @@ export default function Footer() {
         </div>
         <div className="footer__col">
           <h4>Contact</h4>
-          <p>info@andalusia-academy.com</p>
-          <p>+20 100 000 0000</p>
+          <ul>
+            <li>
+              <address>Allasilky Street, Division 4C/6, New Maadi, Cairo, behind Total Masr gas station</address>
+            </li>
+            <li>
+              <a href="https://andalusiaegypt.com/" target="_blank" rel="noopener noreferrer">
+                https://andalusiaegypt.com/
+              </a>
+            </li>
+            <li>
+              <a href="tel:16781">16781</a>
+            </li>
+          </ul>
         </div>
       </div>
       <div className="container footer__bottom">

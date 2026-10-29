@@ -130,16 +130,34 @@ export interface Payment {
 
 export interface Testimonial {
   id: number;
-  name: string;
-  role: string;
   quote: string;
-  avatar: string;
+  displayRole: string | null;
+  authorName: string;
+  isPublished: boolean;
 }
 
 export interface Partner {
   id: number;
   name: string;
-  logo: string;
+  logoUrl: string;
+  websiteUrl: string | null;
+  isPublished: boolean;
+}
+
+export interface Faq {
+  id: number;
+  question: string;
+  answer: string;
+  displayOrder: number;
+  isPublished: boolean;
+}
+
+export interface AppNotification {
+  id: number;
+  type: string;
+  subject: string;
+  message: string;
+  sentAt: string;
 }
 
 // ---- Learning (Sprint 4) ----

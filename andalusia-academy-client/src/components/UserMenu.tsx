@@ -13,7 +13,8 @@ export default function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
   useEffect(() => {
     if (!open) return;
     function handlePointer(e: MouseEvent) {
-      if (container.current && !container.current.contains(e.target as Node)) setOpen(false);
+      if (container.current && !container.current.contains(e.target as Node))
+        setOpen(false);
     }
     function handleKey(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
@@ -60,6 +61,11 @@ export default function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
               My profile
             </Link>
           </li>
+          <li role="none">
+            <Link role="menuitem" to="/notifications" onClick={close}>
+              Notifications
+            </Link>
+          </li>
           {user.role === "Learner" && (
             <>
               <li role="none">
@@ -90,6 +96,13 @@ export default function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
             <li role="none">
               <Link role="menuitem" to="/admin" onClick={close}>
                 Admin dashboard
+              </Link>
+            </li>
+          )}
+          {user.role === "Admin" && (
+            <li role="none">
+              <Link role="menuitem" to="/admin/content" onClick={close}>
+                Website content
               </Link>
             </li>
           )}

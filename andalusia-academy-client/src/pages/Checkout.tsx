@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useApi } from "../hooks/useApi";
 import { ApiError } from "../services/api";
-import { myApplicationsUrl, payApplication } from "../services/enrollment";
+import { myApplicationsUrl, startCheckout } from "../services/enrollment";
 import type { Application } from "../types";
 import { applicationTitle, formatPrice } from "../utils/format";
 import Alert from "../components/Alert";
@@ -13,8 +13,8 @@ import "./Account.css";
 
 export default function Checkout() {
   const { applicationId } = useParams();
-  const { data, loading, error, reload } = useApi<Application[]>(myApplicationsUrl());
-  const [paid, setPaid] = useState(false);
+  const { data, loading, error, reload } =
+    useApi<Application[]>(myApplicationsUrl());
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
 
@@ -25,11 +25,15 @@ export default function Checkout() {
     setPaying(true);
     setPayError(null);
     try {
-      await payApplication(target.id);
-      setPaid(true);
+      const { checkoutUrl } = await startCheckout(target.id);
+      // Leave the app for Kashier's hosted page; it sends the learner back to /checkout/result.
+      window.location.assign(checkoutUrl);
     } catch (err) {
-      setPayError(err instanceof ApiError ? err.message : "Payment failed. Please try again.");
-    } finally {
+      setPayError(
+        err instanceof ApiError
+          ? err.message
+          : "Payment failed. Please try again.",
+      );
       setPaying(false);
     }
   }
@@ -38,7 +42,10 @@ export default function Checkout() {
     <>
       <PageBanner
         title="Checkout"
-        crumbs={[{ label: "My applications", to: "/my-applications" }, { label: "Checkout" }]}
+        crumbs={[
+          { label: "My applications", to: "/my-applications" },
+          { label: "Checkout" },
+        ]}
       />
       <section className="section">
         <div className="container account">
@@ -48,49 +55,63 @@ export default function Checkout() {
             <ErrorState message="We couldn't find that application in your account." />
           )}
 
-          {!loading && !error && application && (paid || application.status === "approved") && (
-            <EnrolledPanel application={application} justPaid={paid} />
-          )}
+          {!loading &&
+            !error &&
+            application &&
+            application.status === "approved" && (
+              <EnrolledPanel application={application} />
+            )}
 
-          {!loading && !error && application && !paid && application.status === "pending" && (
-            <div className="checkout">
-              <div className="account-card">
-                <h2>Order summary</h2>
-                <dl className="account-card__list">
-                  <div>
-                    <dt>{application.courseId ? "Course" : "Program"}</dt>
-                    <dd>{applicationTitle(application)}</dd>
+          {!loading &&
+            !error &&
+            application &&
+            application.status === "pending" && (
+              <div className="checkout">
+                <div className="account-card">
+                  <h2>Order summary</h2>
+                  <dl className="account-card__list">
+                    <div>
+                      <dt>{application.courseId ? "Course" : "Program"}</dt>
+                      <dd>{applicationTitle(application)}</dd>
+                    </div>
+                    <div>
+                      <dt>Application</dt>
+                      <dd>#{application.id}</dd>
+                    </div>
+                  </dl>
+                  <div className="checkout__total">
+                    <span>Total</span>
+                    <strong>{formatPrice(application.amount)}</strong>
                   </div>
-                  <div>
-                    <dt>Application</dt>
-                    <dd>#{application.id}</dd>
-                  </div>
-                </dl>
-                <div className="checkout__total">
-                  <span>Total</span>
-                  <strong>{formatPrice(application.amount)}</strong>
+                </div>
+
+                <div className="account-card">
+                  <h2>Payment</h2>
+                  {payError && <Alert tone="error">{payError}</Alert>}
+                  <p className="checkout__note">
+                    You will be redirected to Kashier&apos;s secure page to pay.
+                    Your enrollment is confirmed as soon as the payment
+                    succeeds.
+                  </p>
+                  <Button
+                    variant="primary"
+                    onClick={() => handlePay(application)}
+                    disabled={paying}
+                  >
+                    {paying
+                      ? "Redirecting to Kashier…"
+                      : `Pay ${formatPrice(application.amount)}`}
+                  </Button>
                 </div>
               </div>
-
-              <div className="account-card">
-                <h2>Payment</h2>
-                {payError && <Alert tone="error">{payError}</Alert>}
-                <p className="checkout__note">
-                  Payments are simulated for now: no card details are needed and nothing is charged.
-                </p>
-                <Button variant="primary" onClick={() => handlePay(application)} disabled={paying}>
-                  {paying ? "Processing…" : `Pay ${formatPrice(application.amount)}`}
-                </Button>
-              </div>
-            </div>
-          )}
+            )}
         </div>
       </section>
     </>
   );
 }
 
-function EnrolledPanel({ application, justPaid }: { application: Application; justPaid: boolean }) {
+function EnrolledPanel({ application }: { application: Application }) {
   return (
     <div className="account-card success-panel">
       <div className="success-panel__icon" aria-hidden="true">
@@ -107,11 +128,8 @@ function EnrolledPanel({ application, justPaid }: { application: Application; ju
           <path d="m5 12 5 5 9-10" />
         </svg>
       </div>
-      <h2>{justPaid ? "Payment successful. You're enrolled!" : "You're already enrolled"}</h2>
-      <p>
-        {applicationTitle(application)} is now in your account.
-        {justPaid && " Your enrollment has been confirmed."}
-      </p>
+      <h2>You're already enrolled</h2>
+      <p>{applicationTitle(application)} is now in your account.</p>
       <div className="account-card__actions">
         <Link to="/my-courses" className="btn btn--primary">
           Go to my courses
