@@ -1,9 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Application.DTOs
 {
     public class CreatePaymentDto
     {
+        [Range(1, int.MaxValue, ErrorMessage = "Application is required.")]
         public int ApplicationId { get; set; }
-        public string Method { get; set; } = "simulation"; // "simulation" for now — Sprint plan allows gateway OR agreed simulation
+
+        [MaxLength(30)]
+        public string Method { get; set; } = "simulation";
     }
 
     public class PaymentDto

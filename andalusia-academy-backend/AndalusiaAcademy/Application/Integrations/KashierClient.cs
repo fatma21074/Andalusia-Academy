@@ -36,12 +36,17 @@ namespace Application.Integrations
             });
 
             var response = await _http.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"[Kashier create-session] {(int)response.StatusCode}: {error}");
+                response.EnsureSuccessStatusCode();
+            }
 
             var body = await response.Content.ReadFromJsonAsync<JsonElement>();
             var sessionUrl = body.GetProperty("sessionUrl").GetString()!;
 
-            // The session id isn't a separate field — Kashier only gives it back embedded
+            // The session id isn't a separate field. Kashier only returns it embedded
             // in the sessionUrl's path, e.g. https://payments.kashier.io/session/<id>?mode=test
             var sessionId = new Uri(sessionUrl).Segments[^1].TrimEnd('/');
 
@@ -56,32 +61,35 @@ namespace Application.Integrations
             var response = await _http.SendAsync(request);
             var rawJson = await response.Content.ReadAsStringAsync();
 
-            // Known for certain: Kashier uses "00" for an accepted transaction across its APIs.
-            // What's NOT yet confirmed: the exact nesting on THIS endpoint's response — so we
-            // search for the field wherever it appears rather than assume one fixed path.
-            var code = FindResponseCode(rawJson);
+            string? status = null;
+            string? code = null;
+            try
+            {
+                using var doc = JsonDocument.Parse(rawJson);
+                if (doc.RootElement.ValueKind == JsonValueKind.Object &&
+                    doc.RootElement.TryGetProperty("data", out var data) &&
+                    data.ValueKind == JsonValueKind.Object)
+                {
+                    if (data.TryGetProperty("status", out var s) && s.ValueKind == JsonValueKind.String)
+                        status = s.GetString();
+                    code = Search(data); // response code of the latest transaction, for the log only
+                }
+            }
+            catch (JsonException) { }
 
+            // Outcome only: no card details or personal data in the log.
+            Console.WriteLine($"[Kashier verify] session {sessionId}: status={status ?? "?"}, code={code ?? "?"}");
+
+            // data.status is "PAID" once the payment has gone through (seen in the real sandbox response).
             return new KashierVerifyResult
             {
-                Success = response.IsSuccessStatusCode && code == "00",
+                Success = response.IsSuccessStatusCode && status == "PAID",
                 ResponseCode = code,
                 RawJson = rawJson
             };
         }
 
-        private static string? FindResponseCode(string json)
-        {
-            try
-            {
-                using var doc = JsonDocument.Parse(json);
-                return Search(doc.RootElement);
-            }
-            catch (JsonException)
-            {
-                return null;
-            }
-        }
-
+        // First "transactionResponseCode" anywhere in the JSON. Used for the log line only.
         private static string? Search(JsonElement element)
         {
             if (element.ValueKind == JsonValueKind.Object)

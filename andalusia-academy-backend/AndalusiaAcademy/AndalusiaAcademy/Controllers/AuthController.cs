@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Application.Services;
 using Application.DTOs;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace AndalusiaAcademy.Controllers
 {
@@ -14,6 +15,7 @@ namespace AndalusiaAcademy.Controllers
         public AuthController(AuthService service) => _service = service;
 
         // POST /api/auth/register
+        [EnableRateLimiting("auth")]
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponseDto>> Register(RegisterRequestDto request)
         {
@@ -25,6 +27,7 @@ namespace AndalusiaAcademy.Controllers
         }
 
         // POST /api/auth/login
+        [EnableRateLimiting("auth")]
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponseDto>> Login(LoginRequestDto request)
         {

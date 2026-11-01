@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 namespace Application.DTOs
 {
     public class MyCourseDto
@@ -52,6 +53,9 @@ namespace Application.DTOs
 
     public class SubmitAssignmentDto
     {
+        [Required(ErrorMessage = "Enter a link to your work."),
+         MaxLength(500),
+         RegularExpression(@"^https?://\S+$", ErrorMessage = "Enter a link starting with http:// or https://.")]
         public string? FileUrl { get; set; }
     }
         public class NotificationDto

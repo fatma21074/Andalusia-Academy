@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Application.DTOs
 {
     public class InstructorCourseDto
@@ -19,19 +21,28 @@ namespace Application.DTOs
 
     public class MarkAttendanceEntryDto
     {
+        [Range(1, int.MaxValue, ErrorMessage = "Invalid student.")]
         public int UserId { get; set; }
-        public string Status { get; set; } = string.Empty; // present | late | absent | excused
+
+        [Required(ErrorMessage = "Status is required."),
+         RegularExpression("^(present|late|absent|excused)$", ErrorMessage = "Status must be present, late, absent or excused.")]
+        public string Status { get; set; } = string.Empty;
     }
 
     public class MarkAttendanceDto
     {
+        [MinLength(1, ErrorMessage = "Add at least one student.")]
         public List<MarkAttendanceEntryDto> Entries { get; set; } = new();
     }
 
     public class CreateAssignmentDto
     {
+        [Required(ErrorMessage = "Title is required."), MaxLength(200)]
         public string Title { get; set; } = string.Empty;
+
+        [MaxLength(4000)]
         public string? Description { get; set; }
+
         public DateTime? DueDate { get; set; }
     }
 
@@ -49,7 +60,10 @@ namespace Application.DTOs
 
     public class GradeSubmissionDto
     {
+        [Range(0, 100, ErrorMessage = "Score must be a whole number from 0 to 100.")]
         public int Score { get; set; }
+
+        [MaxLength(2000)]
         public string? Feedback { get; set; }
     }
 }
