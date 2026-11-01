@@ -111,8 +111,9 @@ namespace Application.Services
             var verify = await _kashier.VerifySessionAsync(payment.SessionId);
             if (!verify.Success)
             {
-                payment.Status = "failed";
-                await _paymentRepo.SaveChangesAsync();
+                // Read-only on purpose: this runs from an unauthenticated callback, so a request that
+                // isn't backed by a verified payment must not change anything. The payment stays
+                // "pending" and the learner can simply retry from My Applications.
                 return OperationResult<PaymentDto>.Fail(OperationStatus.BadRequest, "Payment was not successful.");
             }
 
