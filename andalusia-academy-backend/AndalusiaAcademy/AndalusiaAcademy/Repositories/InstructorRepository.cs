@@ -83,6 +83,30 @@ namespace AndalusiaAcademy.Repositories
         {
             return await _context.Submissions.FindAsync(submissionId);
         }
+                public async Task<List<CourseMaterial>> GetMaterialsAsync(int courseId) =>
+            await _context.CourseMaterials
+                .Where(m => m.CourseId == courseId)
+                .OrderByDescending(m => m.CreatedAt)
+                .ToListAsync();
+
+        // Ownership is baked into the query, same pattern as GetAssignmentForInstructorAsync:
+        // a material is only found if its course belongs to this instructor.
+        public async Task<CourseMaterial?> GetMaterialForInstructorAsync(int instructorId, int materialId) =>
+            await _context.CourseMaterials
+                .Include(m => m.Course)
+                .FirstOrDefaultAsync(m => m.Id == materialId && m.Course.InstructorId == instructorId);
+
+        public async Task AddMaterialAsync(CourseMaterial material)
+        {
+            _context.CourseMaterials.Add(material);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteMaterialAsync(CourseMaterial material)
+        {
+            _context.CourseMaterials.Remove(material);
+            await _context.SaveChangesAsync();
+        }
 
         public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
     }

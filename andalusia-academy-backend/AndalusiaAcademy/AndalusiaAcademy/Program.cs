@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.FileProviders;
 using System.Text;
 using AndalusiaAcademy.Data;
+using AndalusiaAcademy.Storage;
 using Application.Repositories;
 using Application.Services;
 using Application.Mapping;
@@ -49,6 +51,9 @@ builder.Services.AddHttpClient<IKashierClient, KashierClient>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 
+// File storage (course materials)
+builder.Services.AddSingleton<IFileStorage, LocalFileStorage>();
+
 // CORS: allow the React dev server to call the API
 builder.Services.AddCors(options =>
 {
@@ -89,6 +94,7 @@ builder.Services.AddScoped<TestimonialService>();
 builder.Services.AddScoped<PartnerService>();
 builder.Services.AddScoped<FaqService>();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<MaterialService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Swagger
@@ -131,6 +137,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Serve uploaded course materials at /uploads/...
+var uploadsRoot = Path.Combine(builder.Environment.ContentRootPath, "Uploads");
+Directory.CreateDirectory(uploadsRoot);
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsRoot),
+    RequestPath = "/uploads"
+});
 
 app.UseCors("AllowFrontend");
 

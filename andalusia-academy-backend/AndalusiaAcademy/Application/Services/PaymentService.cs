@@ -8,7 +8,7 @@ namespace Application.Services
 {
     public class PaymentService
     {
-               private readonly IApplicationRepository _appRepo;
+        private readonly IApplicationRepository _appRepo;
         private readonly IPaymentRepository _paymentRepo;
         private readonly IEnrollmentRepository _enrollmentRepo;
         private readonly IProgramRepository _programRepo;
@@ -34,34 +34,60 @@ namespace Application.Services
             _notifications = notifications;
         }
 
-        // Starts a real checkout. callbackBaseUrl is OUR OWN backend's address (e.g. http://localhost:5120) —
-        // the controller supplies it from the current request, so this works unchanged in dev or once deployed.
+        // Starts a real checkout and returns the URL the frontend should redirect the learner to.
         public async Task<OperationResult<string>> StartCheckoutAsync(int userId, CreatePaymentDto request, string customerEmail, string callbackBaseUrl)
         {
             var application = await _appRepo.GetByIdAsync(request.ApplicationId);
             if (application is null || application.UserId != userId)
                 return OperationResult<string>.Fail(OperationStatus.NotFound, "Application not found.");
 
-            if (application.Payment is not null)
-                return OperationResult<string>.Fail(OperationStatus.Conflict, "This application has already been paid.");
-
             decimal amount = application.Course?.Price ?? application.Program?.Price
                 ?? throw new InvalidOperationException("Application has neither a course nor a program.");
 
-            var payment = new Payment
-            {
-                ApplicationId = application.Id,
-                Amount = amount,
-                Status = "pending",
-                Method = "kashier"
-            };
-            await _paymentRepo.AddAsync(payment); // mints payment.Id
+            var payment = application.Payment;
 
-            // Our own route param — never Kashier's redirect query string — is what the callback trusts to look the payment up.
+            if (payment is not null && payment.Status == "paid")
+                return OperationResult<string>.Fail(OperationStatus.Conflict, "This application has already been paid.");
+
+            // A checkout was started earlier and never confirmed. The learner may have paid on Kashier
+            // and never come back to us, so ask Kashier first: starting a second checkout on a charge
+            // that actually landed would charge them twice.
+            if (payment is not null && payment.Status == "pending" && payment.SessionId is not null)
+            {
+                var earlier = await ConfirmCheckoutAsync(payment.Id);
+                if (earlier.Status == OperationStatus.Success)
+                    return OperationResult<string>.Fail(OperationStatus.Conflict, "This application has already been paid.");
+            }
+
+            if (payment is null)
+            {
+                payment = new Payment
+                {
+                    ApplicationId = application.Id,
+                    Amount = amount,
+                    Status = "pending",
+                    Method = "kashier"
+                };
+                await _paymentRepo.AddAsync(payment);
+            }
+            else
+            {
+                // One Payment row per application (unique index), so a failed or abandoned
+                // attempt is reused, not duplicated.
+                payment.Status = "pending";
+                payment.Amount = amount;
+                payment.Method = "kashier";
+                payment.SessionId = null;
+                payment.PaidAt = null;
+                await _paymentRepo.SaveChangesAsync();
+            }
+
+            // Our own payment id (never anything Kashier sends back) is what the callback uses to find the payment.
             var redirectUrl = $"{callbackBaseUrl}/api/payments/kashier-callback?paymentId={payment.Id}";
 
+            // Each checkout attempt gets its own Kashier order id.
             var session = await _kashier.CreateSessionAsync(
-                orderId: $"andalusia-{payment.Id}",
+                orderId: $"andalusia-{payment.Id}-{DateTime.UtcNow:yyyyMMddHHmmss}",
                 amount: amount,
                 customerEmail: customerEmail,
                 redirectUrl: redirectUrl);
@@ -73,8 +99,6 @@ namespace Application.Services
         }
 
         // Called from the callback once the learner returns from Kashier's checkout.
-        // paymentId comes from OUR OWN redirect URL above, not from anything Kashier sent — it is
-        // only ever used to look the payment up; the actual confirmation is the VerifySessionAsync call below.
         public async Task<OperationResult<PaymentDto>> ConfirmCheckoutAsync(int paymentId)
         {
             var payment = await _paymentRepo.GetByIdAsync(paymentId);
@@ -82,7 +106,7 @@ namespace Application.Services
                 return OperationResult<PaymentDto>.Fail(OperationStatus.NotFound, "No payment found.");
 
             if (payment.Status == "paid")
-                return OperationResult<PaymentDto>.Ok(ToDto(payment)); // already confirmed — safe to re-visit this page
+                return OperationResult<PaymentDto>.Ok(ToDto(payment)); // already confirmed, safe to re-visit
 
             var verify = await _kashier.VerifySessionAsync(payment.SessionId);
             if (!verify.Success)
@@ -141,7 +165,7 @@ namespace Application.Services
                     user, "payment", "Payment confirmed",
                     $"Payment of {payment.Amount:F2} EGP confirmed.",
                     "Payment confirmed",
-                    $"Your payment of <strong>{payment.Amount:F2} EGP</strong> was successful. You're now enrolled — head to My Courses to get started.");
+                    $"Your payment of <strong>{payment.Amount:F2} EGP</strong> was successful. You're now enrolled. Head to My Courses to get started.");
             }
 
             return OperationResult<PaymentDto>.Ok(ToDto(payment));

@@ -16,5 +16,11 @@ namespace Application.Repositories
         Task<List<Submission>> GetSubmissionsForAssignmentAsync(int assignmentId);
         Task<Submission?> GetSubmissionByIdAsync(int submissionId);
         Task SaveChangesAsync();
+
+        // Course materials (Final Sprint)
+        Task<List<CourseMaterial>> GetMaterialsAsync(int courseId);
+        Task<CourseMaterial?> GetMaterialForInstructorAsync(int instructorId, int materialId);
+        Task AddMaterialAsync(CourseMaterial material);
+        Task DeleteMaterialAsync(CourseMaterial material);
     }
 }

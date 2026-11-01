@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Application.Services;
 using Application.DTOs;
 using Application.Common;
+using Application.Integrations;
 
 namespace AndalusiaAcademy.Controllers
 {
@@ -12,18 +14,27 @@ namespace AndalusiaAcademy.Controllers
     public class PaymentsController : ControllerBase
     {
         private readonly PaymentService _service;
-        public PaymentsController(PaymentService service) => _service = service;
+        private readonly KashierSettings _kashier;
+
+        public PaymentsController(PaymentService service, IOptions<KashierSettings> kashier)
+        {
+            _service = service;
+            _kashier = kashier.Value;
+        }
 
         private int CurrentUserId =>
             int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-        // POST /api/payments — starts a real Kashier checkout, returns the URL to redirect to
+        // POST /api/payments: starts a real Kashier checkout, returns the URL to redirect to
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Pay(CreatePaymentDto request)
         {
             var email = User.FindFirstValue(ClaimTypes.Email)!;
-            var callbackBaseUrl = $"{Request.Scheme}://{Request.Host}";
+
+            var callbackBaseUrl = string.IsNullOrWhiteSpace(_kashier.CallbackBaseUrl)
+                ? $"{Request.Scheme}://{Request.Host}"
+                : _kashier.CallbackBaseUrl.TrimEnd('/');
 
             var result = await _service.StartCheckoutAsync(CurrentUserId, request, email, callbackBaseUrl);
             return result.Status switch
@@ -35,8 +46,8 @@ namespace AndalusiaAcademy.Controllers
             };
         }
 
-        // GET /api/payments/kashier-callback?paymentId=5 — Kashier redirects the learner's browser here.
-        // No [Authorize]: the browser arrives here straight from Kashier, with no JWT attached.
+        // GET /api/payments/kashier-callback?paymentId=5: Kashier redirects the learner's browser here.
+        // No [Authorize]: the browser arrives straight from Kashier, with no JWT attached.
         [HttpGet("kashier-callback")]
         public async Task<IActionResult> KashierCallback([FromQuery] int paymentId)
         {
