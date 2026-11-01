@@ -29,7 +29,7 @@ export default function CareerPathDiscovery() {
                 <CareerPathCard key={careerPath.id} careerPath={careerPath} />
               ))}
             </CardGrid>
-            <p style={{ marginTop: 24 }}>
+            <p className="section__more">
               <Link to="/career-paths" className="career-paths__link">
                 View all career paths →
               </Link>

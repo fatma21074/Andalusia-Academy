@@ -28,7 +28,7 @@ export default function FeaturedCourses() {
                 <CourseCard key={course.id} course={course} />
               ))}
             </CardGrid>
-            <p style={{ marginTop: 24 }}>
+            <p className="section__more">
               <Link to="/courses" className="career-paths__link">
                 View all courses →
               </Link>

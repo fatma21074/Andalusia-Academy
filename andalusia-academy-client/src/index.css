@@ -14,6 +14,10 @@
   --color-gold-light: #d2ac7c;
   --color-border: #d0dece;
   --color-muted: #7f8b78;
+  --color-danger: #c0392b;
+  --color-danger-soft: #fdecea;
+  --color-danger-border: #f5c6c0;
+  --color-danger-ink: #8f2a1f;
 
   /* Type */
   --font-display: "Jost", system-ui, sans-serif;
@@ -42,6 +46,10 @@
   --color-gold-light: #d2ac7c;
   --color-border: #3b3c34;
   --color-muted: #a7a697;
+  --color-danger: #e0675f;
+  --color-danger-soft: rgba(224, 103, 95, 0.14);
+  --color-danger-border: #8f3d38;
+  --color-danger-ink: #f2b8b5;
   --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.2);
   --shadow-hover: 0 16px 40px rgba(0, 0, 0, 0.4);
 }
@@ -173,4 +181,13 @@ button {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Link row under a list, and a readable text width */
+.section__more {
+  margin-top: 24px;
+}
+
+.prose {
+  max-width: 70ch;
 }

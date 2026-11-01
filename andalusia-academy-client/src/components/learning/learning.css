@@ -35,7 +35,7 @@
 }
 
 /* ---- tabs ---- */
-.tabs {
+.learning-tabs {
   display: flex;
   gap: 4px;
   margin-bottom: 28px;
@@ -43,7 +43,7 @@
   overflow-x: auto;
 }
 
-.tabs__tab {
+.learning-tabs__tab {
   flex-shrink: 0;
   padding: 12px 18px;
   border: 0;
@@ -54,11 +54,11 @@
   color: var(--color-muted);
 }
 
-.tabs__tab:hover {
+.learning-tabs__tab:hover {
   color: var(--color-accent);
 }
 
-.tabs__tab--active {
+.learning-tabs__tab--active {
   color: var(--color-accent);
   border-bottom-color: var(--color-accent);
 }
