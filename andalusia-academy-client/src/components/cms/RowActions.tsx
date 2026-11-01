@@ -46,13 +46,9 @@ export default function RowActions({
       <Button variant="secondary" disabled={busy} onClick={onEdit}>
         Edit
       </Button>
-      <Button
-        variant="secondary"
-        disabled={busy}
-        onClick={() => setConfirming(true)}
-      >
+      <Button variant="secondary" className="is-danger" disabled={busy} onClick={() => setConfirming(true)}>
         Delete
-      </Button>
+       </Button>
     </div>
   );
 }
