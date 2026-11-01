@@ -295,8 +295,7 @@ namespace AndalusiaAcademy.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationId")
-                        .IsUnique();
+                    b.HasIndex("ApplicationId");
 
                     b.HasIndex("CourseId");
 
@@ -778,8 +777,8 @@ namespace AndalusiaAcademy.Migrations
             modelBuilder.Entity("Domain.Models.Enrollment", b =>
                 {
                     b.HasOne("Domain.Models.EnrollmentApplication", "Application")
-                        .WithOne("Enrollment")
-                        .HasForeignKey("Domain.Models.Enrollment", "ApplicationId")
+                        .WithMany("Enrollments")
+                        .HasForeignKey("ApplicationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -982,7 +981,7 @@ namespace AndalusiaAcademy.Migrations
 
             modelBuilder.Entity("Domain.Models.EnrollmentApplication", b =>
                 {
-                    b.Navigation("Enrollment");
+                    b.Navigation("Enrollments");
 
                     b.Navigation("Payment");
                 });

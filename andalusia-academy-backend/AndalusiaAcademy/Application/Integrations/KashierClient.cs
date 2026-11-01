@@ -17,6 +17,12 @@ namespace Application.Integrations
 
         public async Task<KashierSessionResult> CreateSessionAsync(string orderId, decimal amount, string customerEmail, string redirectUrl)
         {
+            // Fail early and clearly when the keys were never configured on this machine.
+            if (string.IsNullOrWhiteSpace(_settings.MerchantId) ||
+                string.IsNullOrWhiteSpace(_settings.PaymentApiKey) ||
+                string.IsNullOrWhiteSpace(_settings.SecretKey))
+                throw new PaymentNotConfiguredException();
+
             var request = new HttpRequestMessage(HttpMethod.Post, $"{_settings.BaseUrl}/v3/payment/sessions");
             request.Headers.Add("Authorization", _settings.SecretKey); // raw value, not "Bearer "
             request.Headers.Add("api-key", _settings.PaymentApiKey);

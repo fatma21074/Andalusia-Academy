@@ -1,3 +1,5 @@
+using Application.Integrations;
+
 namespace AndalusiaAcademy.Middleware
 {
     // Last line of defence: any exception that escapes a controller becomes a clean
@@ -31,6 +33,8 @@ namespace AndalusiaAcademy.Middleware
 
                 var (status, message) = ex switch
                 {
+                    PaymentNotConfiguredException => (StatusCodes.Status503ServiceUnavailable,
+                        "Online payment isn't set up on this server yet."),
                     BadHttpRequestException bad => (bad.StatusCode,
                         bad.StatusCode == 413 ? "That upload is too large." : "The request could not be read."),
                     HttpRequestException => (StatusCodes.Status502BadGateway,

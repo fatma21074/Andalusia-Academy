@@ -155,9 +155,12 @@ namespace Application.Services
                 }
             }
 
-            await _paymentRepo.SaveChangesAsync();
+            // One SaveChanges for everything (payment, application, enrollments): all or nothing.
+            // If it fails, the payment stays "pending" and the callback can safely be run again.
             if (newEnrollments.Count > 0)
                 await _enrollmentRepo.AddRangeAsync(newEnrollments);
+            else
+                await _paymentRepo.SaveChangesAsync();
 
             var user = await _userRepo.GetByIdAsync(userId);
             if (user is not null)
