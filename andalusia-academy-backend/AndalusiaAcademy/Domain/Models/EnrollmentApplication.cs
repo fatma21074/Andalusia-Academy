@@ -27,6 +27,6 @@ namespace Domain.Models
         public DateTime AppliedAt { get; set; } = DateTime.UtcNow;
 
         public Payment? Payment { get; set; }
-        public Enrollment? Enrollment { get; set; }
+        public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
 }
