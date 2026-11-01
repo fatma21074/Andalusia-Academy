@@ -1,8 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Application.DTOs
 {
     public class CreateApplicationDto
     {
+        [Range(1, int.MaxValue, ErrorMessage = "Invalid course.")]
         public int? CourseId { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "Invalid program.")]
         public int? ProgramId { get; set; }
     }
 

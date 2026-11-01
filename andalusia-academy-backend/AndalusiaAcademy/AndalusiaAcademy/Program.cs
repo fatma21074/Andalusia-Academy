@@ -1,9 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.FileProviders;
 using System.Text;
+using System.Threading.RateLimiting;
 using AndalusiaAcademy.Data;
+using AndalusiaAcademy.Middleware;
 using AndalusiaAcademy.Storage;
 using Application.Repositories;
 using Application.Services;
@@ -63,6 +66,28 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
+// Rate limiting: slows down password guessing and bulk sign-ups.
+// Applied to login/register with [EnableRateLimiting("auth")]: 10 requests per minute per IP.
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddPolicy("auth", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        await context.HttpContext.Response.WriteAsJsonAsync(
+            new { message = "Too many attempts. Please wait a minute and try again." }, token);
+    };
+});
+
 // Repositories - Scoped to match AppDbContext's own lifetime
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IProgramRepository, ProgramRepository>();
@@ -101,14 +126,13 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    // "Http + bearer" makes Swagger add the "Bearer " prefix itself: paste ONLY the token.
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
-        Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "bearer",
         BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Paste just the token - no \"Bearer \" prefix needed, Swagger adds it."
+        Description = "Paste just the token. Swagger adds the \"Bearer \" prefix for you."
     });
     options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
     {
@@ -148,6 +172,10 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseCors("AllowFrontend");
+
+// After CORS on purpose: error and 429 responses keep their CORS headers.
+app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();
