@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Button from "../components/Button";
+// import Button from "../components/Button";
 import FaqsPanel from "../components/cms/FaqsPanel";
 import PartnersPanel from "../components/cms/PartnersPanel";
 import TestimonialsPanel from "../components/cms/TestimonialsPanel";
@@ -29,24 +29,25 @@ export default function AdminContent() {
       />
       <section className="section">
         <div className="container dashboard">
-          <p className="dashboard__muted">
-            Manage what visitors see on the homepage and About page. Hidden
+              <p className="dashboard__intro dashboard__muted">
+              Manage what visitors see on the homepage and About page. Hidden
             items stay saved but are not shown.{" "}
             <Link to="/admin">Back to the dashboard</Link>
           </p>
           <div className="tabs" role="tablist" aria-label="Content type">
             {TABS.map((t) => (
-              <Button
-                key={t.id}
-                role="tab"
-                id={`tab-${t.id}`}
-                aria-selected={tab === t.id}
-                aria-controls={`panel-${t.id}`}
-                variant={tab === t.id ? "primary" : "secondary"}
-                onClick={() => setTab(t.id)}
-              >
-                {t.label}
-              </Button>
+             <button
+  key={t.id}
+  type="button"
+  role="tab"
+  id={`tab-${t.id}`}
+  aria-selected={tab === t.id}
+  aria-controls={`panel-${t.id}`}
+  className="tabs__tab"
+  onClick={() => setTab(t.id)}
+>
+  {t.label}
+</button>
             ))}
           </div>
           <div
