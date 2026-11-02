@@ -15,6 +15,14 @@ namespace AndalusiaAcademy.Repositories
             return await _context.Instructors.FirstOrDefaultAsync(i => i.UserId == userId);
         }
 
+        public async Task<List<Instructor>> GetAllInstructorsAsync()
+        {
+            return await _context.Instructors
+                .Include(i => i.User)
+                .OrderBy(i => i.User.FirstName).ThenBy(i => i.User.LastName)
+                .ToListAsync();
+        }
+
         public async Task<List<Course>> GetMyCoursesAsync(int instructorId)
         {
             return await _context.Courses
@@ -34,6 +42,23 @@ namespace AndalusiaAcademy.Repositories
                 .Include(e => e.User)
                 .Where(e => e.CourseId == courseId)
                 .ToListAsync();
+        }
+
+        // ---------------- Sessions ----------------
+
+        public async Task<List<Session>> GetSessionsForCourseAsync(int courseId)
+        {
+            return await _context.Sessions
+                .Include(s => s.AttendanceRecords)
+                .Where(s => s.CourseId == courseId)
+                .OrderBy(s => s.SessionDate).ThenBy(s => s.StartTime)
+                .ToListAsync();
+        }
+
+        public async Task AddSessionAsync(Session session)
+        {
+            _context.Sessions.Add(session);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Session?> GetSessionForInstructorAsync(int instructorId, int sessionId)
@@ -56,6 +81,17 @@ namespace AndalusiaAcademy.Repositories
                 existing.Status = status;
             else
                 _context.Attendances.Add(new Attendance { SessionId = sessionId, UserId = userId, Status = status });
+        }
+
+        // ---------------- Assignments ----------------
+
+        public async Task<List<Assignment>> GetAssignmentsForCourseAsync(int courseId)
+        {
+            return await _context.Assignments
+                .Include(a => a.Submissions)
+                .Where(a => a.CourseId == courseId)
+                .OrderBy(a => a.DueDate ?? DateTime.MaxValue).ThenBy(a => a.Id)
+                .ToListAsync();
         }
 
         public async Task<Assignment?> GetAssignmentForInstructorAsync(int instructorId, int assignmentId)
@@ -83,7 +119,10 @@ namespace AndalusiaAcademy.Repositories
         {
             return await _context.Submissions.FindAsync(submissionId);
         }
-                public async Task<List<CourseMaterial>> GetMaterialsAsync(int courseId) =>
+
+        // ---------------- Course materials ----------------
+
+        public async Task<List<CourseMaterial>> GetMaterialsAsync(int courseId) =>
             await _context.CourseMaterials
                 .Where(m => m.CourseId == courseId)
                 .OrderByDescending(m => m.CreatedAt)

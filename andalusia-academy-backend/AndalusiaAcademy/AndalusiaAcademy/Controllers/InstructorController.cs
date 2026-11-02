@@ -35,9 +35,29 @@ namespace AndalusiaAcademy.Controllers
         public async Task<IActionResult> Students(int courseId) =>
             Handle(await _service.GetStudentsAsync(CurrentUserId, courseId));
 
+        // ---- Sessions and attendance ----
+
+        [HttpGet("courses/{courseId:int}/sessions")]
+        public async Task<IActionResult> Sessions(int courseId) =>
+            Handle(await _service.GetSessionsAsync(CurrentUserId, courseId));
+
+        [HttpPost("courses/{courseId:int}/sessions")]
+        public async Task<IActionResult> CreateSession(int courseId, CreateSessionDto request) =>
+            Handle(await _service.CreateSessionAsync(CurrentUserId, courseId, request));
+
+        [HttpGet("sessions/{sessionId:int}/attendance")]
+        public async Task<IActionResult> SessionAttendance(int sessionId) =>
+            Handle(await _service.GetSessionAttendanceAsync(CurrentUserId, sessionId));
+
         [HttpPost("sessions/{sessionId:int}/attendance")]
         public async Task<IActionResult> MarkAttendance(int sessionId, MarkAttendanceDto request) =>
             Handle(await _service.MarkAttendanceAsync(CurrentUserId, sessionId, request));
+
+        // ---- Assignments and grading ----
+
+        [HttpGet("courses/{courseId:int}/assignments")]
+        public async Task<IActionResult> Assignments(int courseId) =>
+            Handle(await _service.GetAssignmentsAsync(CurrentUserId, courseId));
 
         [HttpPost("courses/{courseId:int}/assignments")]
         public async Task<IActionResult> CreateAssignment(int courseId, CreateAssignmentDto request) =>

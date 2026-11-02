@@ -1,3 +1,4 @@
+using System.Globalization;
 using Domain.Models;
 using Application.DTOs;
 using Application.Common;
@@ -55,6 +56,89 @@ namespace Application.Services
             return OperationResult<List<EnrolledStudentDto>>.Ok(result);
         }
 
+        // ---------------- Sessions ----------------
+
+        private static InstructorSessionDto ToSessionDto(Session s) => new()
+        {
+            Id = s.Id,
+            SessionDate = s.SessionDate,
+            StartTime = s.StartTime,
+            EndTime = s.EndTime,
+            Status = s.Status,
+            MarkedCount = s.AttendanceRecords.Count
+        };
+
+        public async Task<OperationResult<List<InstructorSessionDto>>> GetSessionsAsync(int userId, int courseId)
+        {
+            var instructor = await GetInstructorAsync(userId);
+            if (instructor is null)
+                return OperationResult<List<InstructorSessionDto>>.Fail(OperationStatus.NotFound, "No instructor profile found for this account.");
+
+            var course = await _repo.GetMyCourseAsync(instructor.Id, courseId);
+            if (course is null)
+                return OperationResult<List<InstructorSessionDto>>.Fail(OperationStatus.NotFound, "Course not found, or it isn't yours.");
+
+            var sessions = await _repo.GetSessionsForCourseAsync(courseId);
+            return OperationResult<List<InstructorSessionDto>>.Ok(sessions.Select(ToSessionDto).ToList());
+        }
+
+        public async Task<OperationResult<InstructorSessionDto>> CreateSessionAsync(int userId, int courseId, CreateSessionDto request)
+        {
+            var instructor = await GetInstructorAsync(userId);
+            if (instructor is null)
+                return OperationResult<InstructorSessionDto>.Fail(OperationStatus.NotFound, "No instructor profile found for this account.");
+
+            var course = await _repo.GetMyCourseAsync(instructor.Id, courseId);
+            if (course is null)
+                return OperationResult<InstructorSessionDto>.Fail(OperationStatus.NotFound, "Course not found, or it isn't yours.");
+
+            if (!TimeSpan.TryParse(request.StartTime, CultureInfo.InvariantCulture, out var start) ||
+                !TimeSpan.TryParse(request.EndTime, CultureInfo.InvariantCulture, out var end))
+                return OperationResult<InstructorSessionDto>.Fail(OperationStatus.BadRequest, "Enter the times like 09:30.");
+
+            if (end <= start)
+                return OperationResult<InstructorSessionDto>.Fail(OperationStatus.BadRequest, "The end time must be after the start time.");
+
+            var session = new Session
+            {
+                CourseId = courseId,
+                InstructorId = instructor.Id,
+                // Date only, no time zone, so it reads back exactly as it was entered.
+                SessionDate = DateTime.SpecifyKind(request.SessionDate!.Value.Date, DateTimeKind.Unspecified),
+                StartTime = start,
+                EndTime = end,
+                Status = request.Status ?? "scheduled"
+            };
+            await _repo.AddSessionAsync(session);
+            return OperationResult<InstructorSessionDto>.Ok(ToSessionDto(session));
+        }
+
+        // Every enrolled student with their mark for this session (null = not marked yet).
+        public async Task<OperationResult<List<SessionAttendanceDto>>> GetSessionAttendanceAsync(int userId, int sessionId)
+        {
+            var instructor = await GetInstructorAsync(userId);
+            if (instructor is null)
+                return OperationResult<List<SessionAttendanceDto>>.Fail(OperationStatus.NotFound, "No instructor profile found for this account.");
+
+            var session = await _repo.GetSessionForInstructorAsync(instructor.Id, sessionId);
+            if (session is null)
+                return OperationResult<List<SessionAttendanceDto>>.Fail(OperationStatus.NotFound, "Session not found, or it isn't yours.");
+
+            var students = await _repo.GetEnrolledStudentsAsync(session.CourseId);
+            var marks = (await _repo.GetAttendanceForSessionAsync(sessionId))
+                .GroupBy(a => a.UserId)
+                .ToDictionary(g => g.Key, g => g.First().Status);
+
+            var result = students.Select(e => new SessionAttendanceDto
+            {
+                UserId = e.UserId,
+                FirstName = e.User.FirstName,
+                LastName = e.User.LastName,
+                Status = marks.TryGetValue(e.UserId, out var status) ? status : null
+            }).ToList();
+            return OperationResult<List<SessionAttendanceDto>>.Ok(result);
+        }
+
         public async Task<OperationResult<object>> MarkAttendanceAsync(int userId, int sessionId, MarkAttendanceDto request)
         {
             var instructor = await GetInstructorAsync(userId);
@@ -70,6 +154,30 @@ namespace Application.Services
 
             await _repo.SaveChangesAsync();
             return OperationResult<object>.Ok(new { message = $"Attendance saved for {request.Entries.Count} student(s)." });
+        }
+
+        // ---------------- Assignments ----------------
+
+        public async Task<OperationResult<List<InstructorAssignmentDto>>> GetAssignmentsAsync(int userId, int courseId)
+        {
+            var instructor = await GetInstructorAsync(userId);
+            if (instructor is null)
+                return OperationResult<List<InstructorAssignmentDto>>.Fail(OperationStatus.NotFound, "No instructor profile found for this account.");
+
+            var course = await _repo.GetMyCourseAsync(instructor.Id, courseId);
+            if (course is null)
+                return OperationResult<List<InstructorAssignmentDto>>.Fail(OperationStatus.NotFound, "Course not found, or it isn't yours.");
+
+            var assignments = await _repo.GetAssignmentsForCourseAsync(courseId);
+            var result = assignments.Select(a => new InstructorAssignmentDto
+            {
+                Id = a.Id,
+                Title = a.Title,
+                Description = a.Description,
+                DueDate = a.DueDate,
+                SubmissionCount = a.Submissions.Count
+            }).ToList();
+            return OperationResult<List<InstructorAssignmentDto>>.Ok(result);
         }
 
         public async Task<OperationResult<object>> CreateAssignmentAsync(int userId, int courseId, CreateAssignmentDto request)
@@ -131,6 +239,22 @@ namespace Application.Services
             await _repo.SaveChangesAsync();
 
             return OperationResult<object>.Ok(new { message = "Graded." });
+        }
+
+        // ---------------- Admin: list of instructors (for the course form's instructor picker) ----------------
+
+        public async Task<List<AdminInstructorDto>> GetAllInstructorsAsync()
+        {
+            var instructors = await _repo.GetAllInstructorsAsync();
+            return instructors.Select(i => new AdminInstructorDto
+            {
+                InstructorId = i.Id,
+                UserId = i.UserId,
+                FirstName = i.User.FirstName,
+                LastName = i.User.LastName,
+                Email = i.User.Email,
+                Specialization = i.Specialization
+            }).ToList();
         }
     }
 }
