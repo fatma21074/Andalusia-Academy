@@ -142,14 +142,43 @@
   border-radius: var(--radius);
 }
 
+.material-list__info {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.material-list__heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .material-list__title {
-  margin-left: 12px;
   font-weight: 600;
   color: var(--color-ink);
 }
 
+.material-list__meta {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.material-list__error {
+  margin: 0 0 12px;
+  color: var(--color-danger, #a12622);
+}
+
 .material-list__item .btn {
   padding: 8px 18px;
+}
+
+.material-list__item .btn svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
 }
 
 /* ---- assignments ---- */
@@ -276,9 +305,12 @@
     align-items: flex-start;
   }
 
-  .material-list__title {
-    display: block;
-    margin: 8px 0 0 0;
+  .material-list__heading {
+    align-items: flex-start;
+  }
+
+  .material-list__item .btn {
+    align-self: stretch;
   }
 }
 

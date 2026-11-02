@@ -9,8 +9,7 @@ import FormTextArea from "../FormTextArea";
 
 interface CourseFormProps {
   categories: Category[];
-  /** `undefined` while the instructors endpoint is unavailable: the form then asks for a typed Instructor ID. */
-  instructors?: AdminInstructor[];
+  instructors: AdminInstructor[];
   /** When set, the form edits this course instead of creating a new one. */
   course?: CourseDetail;
   submitting: boolean;
@@ -105,30 +104,18 @@ export default function CourseForm({
         onChange={set("categoryId")}
         error={errors.categoryId}
       />
-      {instructors ? (
-        <FormSelect
-          id="course-instructor"
-          label="Instructor"
-          placeholder="Select instructor"
-          value={values.instructorId}
-          options={instructors.map((i) => ({
-            value: String(i.instructorId),
-            label: `${i.firstName} ${i.lastName} (${i.email})`,
-          }))}
-          onChange={set("instructorId")}
-          error={errors.instructorId}
-        />
-      ) : (
-        <FormField
-          id="course-instructor"
-          label="Instructor ID"
-          type="number"
-          min={1}
-          value={values.instructorId}
-          onChange={set("instructorId")}
-          error={errors.instructorId}
-        />
-      )}
+      <FormSelect
+        id="course-instructor"
+        label="Instructor"
+        placeholder="Select instructor"
+        value={values.instructorId}
+        options={instructors.map((i) => ({
+          value: String(i.instructorId),
+          label: `${i.firstName} ${i.lastName} (${i.email})`,
+        }))}
+        onChange={set("instructorId")}
+        error={errors.instructorId}
+      />
       <FormField
         id="course-duration"
         label="Duration"

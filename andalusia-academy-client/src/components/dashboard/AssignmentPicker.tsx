@@ -1,54 +1,61 @@
-import { useState, type FormEvent } from "react";
 import type { ApiError } from "../../services/api";
 import type { InstructorAssignment } from "../../types";
 import { formatDate } from "../../utils/format";
-import Button from "../Button";
-import FormField from "../FormField";
 import FormSelect from "../FormSelect";
+import AsyncView from "./AsyncView";
 
 interface AssignmentPickerProps {
-  assignments: { data?: InstructorAssignment[]; error: ApiError | null; loading: boolean };
+  assignments: { data?: InstructorAssignment[]; error: ApiError | null; loading: boolean; reload: () => void };
   selectedId: number | null;
   onSelect: (id: number | null) => void;
 }
 
-/**
- * Lists the course's assignments in a dropdown. While the backend has no "list assignments" endpoint,
- * it falls back to a typed Assignment ID so the screen keeps working.
- */
 export default function AssignmentPicker({ assignments, selectedId, onSelect }: AssignmentPickerProps) {
-  const [typedId, setTypedId] = useState("");
-
-  if (assignments.data) {
-    if (assignments.data.length === 0) return <p className="dashboard__muted">This course has no assignments yet.</p>;
-    return (
-      <FormSelect
-        id="assignment-picker"
-        label="Assignment"
-        value={selectedId === null ? "" : String(selectedId)}
-        options={assignments.data.map((a) => ({
-          value: String(a.id),
-          label: a.dueDate ? `${a.title} (due ${formatDate(a.dueDate)})` : a.title,
-        }))}
-        onChange={(value) => onSelect(Number(value))}
-      />
-    );
-  }
-
-  if (assignments.loading) return <p className="dashboard__muted">Loading assignments…</p>;
-
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    const id = Number(typedId);
-    if (Number.isInteger(id) && id > 0) onSelect(id);
-  }
-
   return (
-    <form className="dashboard-form dashboard-form--inline" onSubmit={handleSubmit}>
-      <FormField id="assignment-id" label="Assignment ID" type="number" min={1} value={typedId} onChange={setTypedId} />
-      <Button type="submit" variant="secondary">
-        Load submissions
-      </Button>
-    </form>
+    <AsyncView
+      query={assignments}
+      loadingLabel="Loading assignments…"
+      empty={{ title: "This course has no assignments yet." }}
+    >
+      {(list) => (
+        <>
+          <div className="table-wrap">
+            <table className="data-table">
+              <caption className="sr-only">Assignments for this course</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Due date</th>
+                  <th scope="col">Submissions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {list.map((assignment) => (
+                  <tr key={assignment.id}>
+                    <td data-label="Title">{assignment.title}</td>
+                    <td data-label="Description">{assignment.description || "—"}</td>
+                    <td data-label="Due date">{assignment.dueDate ? formatDate(assignment.dueDate) : "—"}</td>
+                    <td data-label="Submissions">{assignment.submissionCount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <FormSelect
+            id="assignment-picker"
+            label="Review submissions for"
+            value={selectedId === null ? "" : String(selectedId)}
+            options={list.map((assignment) => ({
+              value: String(assignment.id),
+              label: assignment.dueDate
+                ? `${assignment.title} (due ${formatDate(assignment.dueDate)})`
+                : assignment.title,
+            }))}
+            onChange={(value) => onSelect(Number(value))}
+          />
+        </>
+      )}
+    </AsyncView>
   );
 }
