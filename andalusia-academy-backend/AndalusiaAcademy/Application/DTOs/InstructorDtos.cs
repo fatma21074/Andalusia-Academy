@@ -66,4 +66,60 @@ namespace Application.DTOs
         [MaxLength(2000)]
         public string? Feedback { get; set; }
     }
+
+    // ---- Sessions ----
+    public class InstructorSessionDto
+    {
+        public int Id { get; set; }
+        public DateTime SessionDate { get; set; }
+        public TimeSpan StartTime { get; set; }   // serialized as "09:30:00", same as the learner's session list
+        public TimeSpan EndTime { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public int MarkedCount { get; set; }      // students whose attendance is already marked
+    }
+
+    public class CreateSessionDto
+    {
+        [Required(ErrorMessage = "Date is required.")]
+        public DateTime? SessionDate { get; set; }   // send a plain date: "2026-11-10"
+
+        [Required(ErrorMessage = "Start time is required."),
+         RegularExpression(@"^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$", ErrorMessage = "Use a time like 09:30.")]
+        public string StartTime { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "End time is required."),
+         RegularExpression(@"^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$", ErrorMessage = "Use a time like 11:00.")]
+        public string EndTime { get; set; } = string.Empty;
+
+        [RegularExpression("^(scheduled|live|completed|cancelled)$", ErrorMessage = "Status must be scheduled, live, completed or cancelled.")]
+        public string? Status { get; set; }          // optional, defaults to "scheduled"
+    }
+
+    public class SessionAttendanceDto
+    {
+        public int UserId { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string? Status { get; set; }          // null = not marked yet
+    }
+
+    // ---- Assignments list and admin instructor list ----
+    public class InstructorAssignmentDto
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public DateTime? DueDate { get; set; }
+        public int SubmissionCount { get; set; }
+    }
+
+    public class AdminInstructorDto
+    {
+        public int InstructorId { get; set; }        // Instructor.Id: what Course.InstructorId points at (NOT the user id)
+        public int UserId { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Specialization { get; set; }
+    }
 }
