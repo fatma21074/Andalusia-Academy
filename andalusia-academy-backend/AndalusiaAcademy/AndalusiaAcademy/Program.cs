@@ -162,6 +162,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Serve the built React app (wwwroot) from the same site, so the API and the frontend share one address.
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 // Serve uploaded course materials at /uploads/...
 var uploadsRoot = Path.Combine(builder.Environment.ContentRootPath, "Uploads");
 Directory.CreateDirectory(uploadsRoot);
@@ -182,6 +186,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Any other path (for example /courses/3 after a refresh) gets the React app. API and upload paths are excluded.
+app.MapFallbackToFile("{*path:nonfile:regex(^(?!api/|uploads/).*$)}", "index.html");
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();

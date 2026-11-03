@@ -3,3 +3,7 @@ obj/
 .vs/
 *.user
 Uploads/
+
+# Server-only settings with secrets
+appsettings.Production.json
+publish/

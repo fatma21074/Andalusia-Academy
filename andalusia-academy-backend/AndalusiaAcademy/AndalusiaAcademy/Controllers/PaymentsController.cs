@@ -15,11 +15,15 @@ namespace AndalusiaAcademy.Controllers
     {
         private readonly PaymentService _service;
         private readonly KashierSettings _kashier;
+        private readonly string _frontendBase;
 
-        public PaymentsController(PaymentService service, IOptions<KashierSettings> kashier)
+        public PaymentsController(PaymentService service, IOptions<KashierSettings> kashier, IConfiguration config)
         {
             _service = service;
             _kashier = kashier.Value;
+            // Where the learner lands after paying. Local default is the Vite dev server;
+            // in production set Frontend:BaseUrl to the site's address (the API serves the React app itself).
+            _frontendBase = (config["Frontend:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/');
         }
 
         private int CurrentUserId =>
@@ -52,11 +56,10 @@ namespace AndalusiaAcademy.Controllers
         public async Task<IActionResult> KashierCallback([FromQuery] int paymentId)
         {
             var result = await _service.ConfirmCheckoutAsync(paymentId);
-            var frontendBase = "http://localhost:5173"; // matches the CORS origin already set in Program.cs
 
             return result.Status == OperationStatus.Success
-                ? Redirect($"{frontendBase}/checkout/result?paymentId={paymentId}&status=success")
-                : Redirect($"{frontendBase}/checkout/result?paymentId={paymentId}&status=failed");
+                ? Redirect($"{_frontendBase}/checkout/result?paymentId={paymentId}&status=success")
+                : Redirect($"{_frontendBase}/checkout/result?paymentId={paymentId}&status=failed");
         }
 
         // GET /api/payments/my
