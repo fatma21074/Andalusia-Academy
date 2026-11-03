@@ -4,6 +4,31 @@ import { UNAUTHORIZED_EVENT, clearSession, getToken } from "../auth/storage";
 // Without it, `npm run dev` talks to the local API (https profile) and a production build uses the same origin.
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? "https://localhost:7200" : "");
 
+export function resolveApiUrl(path: string): string {
+  return new URL(path, BASE_URL || window.location.origin).toString();
+}
+
+export interface BlobResponse {
+  blob: Blob;
+  filename?: string;
+}
+
+function filenameFromContentDisposition(value: string | null): string | undefined {
+  if (!value) return undefined;
+
+  const encoded = value.match(/filename\*\s*=\s*(?:UTF-8'')?([^;]+)/i)?.[1]?.trim();
+  if (encoded) {
+    try {
+      return decodeURIComponent(encoded.replace(/^["']|["']$/g, ""));
+    } catch {
+      return encoded.replace(/^["']|["']$/g, "");
+    }
+  }
+
+  const plain = value.match(/filename\s*=\s*(?:"([^"]+)"|([^;]+))/i);
+  return (plain?.[1] ?? plain?.[2])?.trim();
+}
+
 export class ApiError extends Error {
   readonly status: number;
 
@@ -49,7 +74,8 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const token = authenticated ? getToken() : null;
 
   const headers: Record<string, string> = { Accept: "application/json" };
-  if (body !== undefined) headers["Content-Type"] = "application/json";
+  const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
+  if (body !== undefined && !isFormData) headers["Content-Type"] = "application/json";
   if (token) headers.Authorization = `Bearer ${token}`;
 
   let response: Response;
@@ -58,7 +84,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
       method,
       signal,
       headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body),
     });
   } catch (err) {
     if (err instanceof DOMException && err.name === "AbortError") throw err;
@@ -81,9 +107,55 @@ export function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
   return request<T>(path, { signal });
 }
 
+export async function getBlob(path: string): Promise<BlobResponse> {
+  const url = resolveApiUrl(path);
+  const apiOrigin = new URL(BASE_URL || window.location.origin).origin;
+  const token = new URL(url).origin === apiOrigin ? getToken() : null;
+  const headers: Record<string, string> = { Accept: "*/*" };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  let response: Response;
+  try {
+    response = await fetch(url, { headers });
+  } catch {
+    throw new ApiError(0, "Couldn't download the file. Check your connection and try again.");
+  }
+
+  if (!response.ok) {
+    if (response.status === 401 && token) {
+      clearSession();
+      window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
+    }
+    throw new ApiError(response.status, await messageFrom(response));
+  }
+
+  const contentType = response.headers.get("Content-Type")?.toLowerCase() ?? "";
+  if (contentType.includes("text/html")) {
+    throw new ApiError(0, "The server returned a web page instead of the requested file.");
+  }
+
+  const blob = await response.blob();
+  if (blob.size === 0) {
+    throw new ApiError(0, "The downloaded file is empty.");
+  }
+
+  return {
+    blob,
+    filename: filenameFromContentDisposition(response.headers.get("Content-Disposition")),
+  };
+}
+
 export function postJson<T>(
   path: string,
   body: unknown,
+  options: Pick<RequestOptions, "authenticated" | "signal"> = {},
+): Promise<T> {
+  return request<T>(path, { ...options, method: "POST", body });
+}
+
+export function postForm<T>(
+  path: string,
+  body: FormData,
   options: Pick<RequestOptions, "authenticated" | "signal"> = {},
 ): Promise<T> {
   return request<T>(path, { ...options, method: "POST", body });

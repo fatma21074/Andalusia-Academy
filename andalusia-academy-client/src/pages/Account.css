@@ -10,11 +10,12 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg, 12px);
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
 .data-table th,
 .data-table td {
-  padding: 14px 16px;
+  padding: 14px 18px;
   text-align: left;
   border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
@@ -30,6 +31,14 @@
 
 .data-table tbody tr:last-child td {
   border-bottom: 0;
+}
+
+.data-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.data-table tbody tr:hover {
+  background: var(--color-surface-alt);
 }
 
 .data-table__title {
@@ -70,22 +79,25 @@
   .data-table {
     border: 0;
     background: none;
+    box-shadow: none;
   }
 
   .data-table tr {
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg, 12px);
     overflow: hidden;
+    box-shadow: var(--shadow-card);
   }
 
   .data-table td {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     text-align: right;
+    overflow-wrap: anywhere;
   }
 
   /* No button for this row (e.g. already enrolled): don't show an empty label */
@@ -95,6 +107,7 @@
 
   .data-table td::before {
     content: attr(data-label);
+    flex-shrink: 0;
     font-size: 0.78rem;
     font-weight: 600;
     text-transform: uppercase;

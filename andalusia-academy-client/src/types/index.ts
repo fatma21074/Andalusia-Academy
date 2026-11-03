@@ -175,6 +175,7 @@ export interface MaterialInfo {
   title: string;
   type: "link" | "file";
   url: string;
+  createdAt: string;
 }
 export interface SessionInfo {
   id: number;
@@ -226,6 +227,27 @@ export interface InstructorSubmission {
   score: number | null;
   feedback: string | null;
 }
+export interface InstructorSession {
+  id: number;
+  sessionDate: string;
+  startTime: string;
+  endTime: string;
+  status: SessionStatus;
+  markedCount: number;
+}
+export interface SessionAttendance {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  status: AttendanceStatus | null;
+}
+export interface InstructorMaterial {
+  id: number;
+  title: string;
+  type: "link" | "file";
+  url: string;
+  createdAt: string;
+}
 export interface AdminUser {
   userId: number;
   firstName: string;
@@ -235,17 +257,19 @@ export interface AdminUser {
   createdAt: string;
 }
 
-/** Assumed shape of GET /api/instructor/courses/{id}/assignments (endpoint to be added by the backend). */
 export interface InstructorAssignment {
   id: number;
   title: string;
+  description: string | null;
   dueDate: string | null;
+  submissionCount: number;
 }
 
-/** Assumed shape of GET /api/admin/instructors. `instructorId` is Instructor.Id (what Course.InstructorId points at), not User.Id. */
 export interface AdminInstructor {
   instructorId: number;
+  userId: number;
   firstName: string;
   lastName: string;
   email: string;
+  specialization: string | null;
 }

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import AssignmentForm from "../components/dashboard/AssignmentForm";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import AssignmentPicker from "../components/dashboard/AssignmentPicker";
 import AsyncView from "../components/dashboard/AsyncView";
 import StatusMessages from "../components/dashboard/StatusMessages";
@@ -11,27 +11,44 @@ import { useApi } from "../hooks/useApi";
 import { useNotice } from "../hooks/useNotice";
 import { ApiError } from "../services/api";
 import {
-  createInstructorAssignment,
   gradeInstructorSubmission,
   instructorAssignmentsUrl,
   instructorCoursesUrl,
   instructorStudentsUrl,
   instructorSubmissionsUrl,
-  type AssignmentInput,
 } from "../services/instructor";
 import type { EnrolledStudent, InstructorAssignment, InstructorCourse, InstructorSubmission } from "../types";
 import "../components/dashboard/Dashboard.css";
 
 export default function InstructorDashboard() {
   const courses = useApi<InstructorCourse[]>(instructorCoursesUrl());
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [chosenCourse, setChosenCourse] = useState<number | null>(null);
   const [chosenAssignment, setChosenAssignment] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useNotice();
 
+  useEffect(() => {
+    const state = location.state;
+    if (typeof state === "object" && state !== null && "assignmentCreated" in state && state.assignmentCreated === true) {
+      setNotice("Assignment created.");
+      navigate(`${location.pathname}${location.search}${location.hash}`, {
+        replace: true,
+        state: null,
+      });
+    }
+  }, [location, navigate, setNotice]);
+
   // The open course and assignment are derived, so no effect is needed to "pick the first one".
-  const selectedCourse = chosenCourse ?? courses.data?.[0]?.courseId ?? null;
+  const requestedCourseId = Number(searchParams.get("courseId"));
+  const selectedCourse =
+    chosenCourse ??
+    courses.data?.find((course) => course.courseId === requestedCourseId)?.courseId ??
+    courses.data?.[0]?.courseId ??
+    null;
   const students = useApi<EnrolledStudent[]>(selectedCourse === null ? null : instructorStudentsUrl(selectedCourse));
   const assignments = useApi<InstructorAssignment[]>(
     selectedCourse === null ? null : instructorAssignmentsUrl(selectedCourse),
@@ -61,18 +78,6 @@ export default function InstructorDashboard() {
     } finally {
       setSaving(false);
     }
-  }
-
-  function createAssignment(input: AssignmentInput) {
-    if (selectedCourse === null) return Promise.resolve(false);
-    return run(
-      async () => {
-        await createInstructorAssignment(selectedCourse, input);
-        assignments.reload();
-      },
-      "Assignment created.",
-      "Could not create the assignment.",
-    );
   }
 
   function grade(submissionId: number, score: number, feedback: string) {
@@ -130,6 +135,44 @@ export default function InstructorDashboard() {
 
           {selectedCourse !== null && (
             <>
+              <div className="dashboard__course-actions">
+                <section className="dashboard__course-action">
+                  <div>
+                    <h2>Assignments</h2>
+                    <p>Review course assignments and student submissions, or create a new assignment.</p>
+                  </div>
+                  <Link
+                    className="btn btn--secondary"
+                    to={`/instructor/courses/${selectedCourse}/assignments/create`}
+                  >
+                    Create Assignment
+                  </Link>
+                </section>
+                <section className="dashboard__course-action">
+                  <div>
+                    <h2>Course Materials</h2>
+                    <p>View, add, or remove learning resources for this course.</p>
+                  </div>
+                  <Link
+                    className="btn btn--secondary"
+                    to={`/instructor/courses/${selectedCourse}/materials`}
+                  >
+                    Manage Course Materials
+                  </Link>
+                </section>
+                <section className="dashboard__course-action">
+                  <div>
+                    <h2>Sessions &amp; Attendance</h2>
+                    <p>Schedule course sessions and manage student attendance.</p>
+                  </div>
+                  <Link
+                    className="btn btn--secondary"
+                    to={`/instructor/courses/${selectedCourse}/sessions`}
+                  >
+                    Sessions &amp; Attendance
+                  </Link>
+                </section>
+              </div>
               <section className="dashboard__panel" aria-labelledby="students-heading">
                 <h2 id="students-heading">Students</h2>
                 <AsyncView
@@ -141,15 +184,15 @@ export default function InstructorDashboard() {
                 </AsyncView>
               </section>
 
-              <section className="dashboard__panel" aria-labelledby="new-assignment-heading">
-                <h2 id="new-assignment-heading">Create assignment</h2>
-                <AssignmentForm submitting={saving} onSubmit={createAssignment} />
-              </section>
-
               <section className="dashboard__panel" aria-labelledby="submissions-heading">
-                <h2 id="submissions-heading">Submissions</h2>
+                <h2 id="submissions-heading">Assignments &amp; submissions</h2>
                 <AssignmentPicker
-                  assignments={{ data: assignmentList, error: assignments.error, loading: assignments.loading }}
+                  assignments={{
+                    data: assignmentList,
+                    error: assignments.error,
+                    loading: assignments.loading,
+                    reload: assignments.reload,
+                  }}
                   selectedId={selectedAssignment}
                   onSelect={setChosenAssignment}
                 />

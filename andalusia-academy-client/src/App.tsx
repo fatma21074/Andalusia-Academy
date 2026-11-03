@@ -21,6 +21,9 @@ import Checkout from "./pages/Checkout";
 import MyCourses from "./pages/MyCourses";
 import CourseLearn from "./pages/CourseLearn";
 import InstructorDashboard from "./pages/InstructorDashboard";
+import InstructorSessionsPage from "./pages/InstructorSessionsPage";
+import InstructorMaterialsPage from "./pages/InstructorMaterialsPage";
+import InstructorAssignmentCreatePage from "./pages/InstructorAssignmentCreatePage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminContent from "./pages/AdminContent";
 import CheckoutResult from "./pages/CheckoutResult";
@@ -64,6 +67,9 @@ export default function App() {
 
             <Route element={<ProtectedRoute roles={["Instructor"]} />}>
               <Route path="/instructor" element={<InstructorDashboard />} />
+              <Route path="/instructor/courses/:courseId/sessions" element={<InstructorSessionsPage />} />
+              <Route path="/instructor/courses/:courseId/materials" element={<InstructorMaterialsPage />} />
+              <Route path="/instructor/courses/:courseId/assignments/create" element={<InstructorAssignmentCreatePage />} />
             </Route>
 
             <Route element={<ProtectedRoute roles={["Admin"]} />}>

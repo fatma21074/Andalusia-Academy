@@ -199,8 +199,14 @@ export default function TestimonialsPanel() {
         >
           {(list) => (
             <div className="table-wrap">
-              <table className="data-table">
+              <table className="data-table testimonial-table">
                 <caption className="sr-only">Graduate testimonials</caption>
+                <colgroup>
+                  <col className="testimonial-table__author-column" />
+                  <col className="testimonial-table__quote-column" />
+                  <col className="testimonial-table__visibility-column" />
+                  <col className="testimonial-table__actions-column" />
+                </colgroup>
                 <thead>
                   <tr>
                     <th scope="col">Author</th>

@@ -9,6 +9,7 @@ import PageBanner from "../components/PageBanner";
 import Pagination from "../components/Pagination";
 import SelectField from "../components/SelectField";
 import StatCard from "../components/StatCard";
+import FormField from "../components/FormField";
 import { useApi } from "../hooks/useApi";
 import { useNotice } from "../hooks/useNotice";
 import {
@@ -45,10 +46,10 @@ export default function AdminDashboard() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useNotice();
+  const [instructorSearch, setInstructorSearch] = useState("");
 
   const users = useApi<AdminUser[]>(adminUsersUrl());
   const categories = useApi<Category[]>(categoriesUrl());
-  // Until the backend adds this endpoint, `instructors.data` stays empty and the form asks for a typed ID.
   const instructors = useApi<AdminInstructor[]>(adminInstructorsUrl());
   const courses = useApi<PagedResult<Course>>(
     coursesUrl({
@@ -123,6 +124,12 @@ export default function AdminDashboard() {
   const instructorCount = users.data?.filter(
     (user) => user.role === "Instructor",
   ).length;
+  const normalizedInstructorSearch = instructorSearch.trim().toLocaleLowerCase();
+  const visibleInstructors = instructors.data?.filter((instructor) =>
+    `${instructor.instructorId} ${instructor.userId} ${instructor.firstName} ${instructor.lastName} ${instructor.email} ${instructor.specialization ?? ""}`
+      .toLocaleLowerCase()
+      .includes(normalizedInstructorSearch),
+  );
 
   return (
     <>
@@ -177,16 +184,77 @@ export default function AdminDashboard() {
               }}
             >
               {(list) => (
-                <CourseForm
-                  key={editing?.id ?? "new"}
-                  categories={list}
-                  instructors={instructors.data}
-                  course={editing}
-                  submitting={saving}
-                  onSubmit={saveCourse}
-                  onCancel={editing ? () => setEditing(undefined) : undefined}
-                />
+                <AsyncView
+                  query={instructors}
+                  loadingLabel="Loading instructors…"
+                  empty={{
+                    title: "No instructors available",
+                    message: "Add an instructor account before creating or assigning courses.",
+                  }}
+                >
+                  {(instructorList) => (
+                    <CourseForm
+                      key={editing?.id ?? "new"}
+                      categories={list}
+                      instructors={instructorList}
+                      course={editing}
+                      submitting={saving}
+                      onSubmit={saveCourse}
+                      onCancel={editing ? () => setEditing(undefined) : undefined}
+                    />
+                  )}
+                </AsyncView>
               )}
+            </AsyncView>
+          </section>
+
+          <section className="dashboard__panel" aria-labelledby="instructors-heading">
+            <h2 id="instructors-heading">Instructors</h2>
+            <FormField
+              id="instructor-search"
+              label="Search instructors"
+              type="search"
+              value={instructorSearch}
+              onChange={setInstructorSearch}
+              placeholder="Name, email, or ID"
+            />
+            <AsyncView
+              query={instructors}
+              loadingLabel="Loading instructors…"
+              empty={{ title: "No instructors found", message: "Instructor accounts will appear here." }}
+              isEmpty={(list) => list.length === 0}
+            >
+              {(list) =>
+                visibleInstructors?.length === 0 ? (
+                  <p className="dashboard__muted">No instructors match your search.</p>
+                ) : (
+                  <div className="table-wrap">
+                    <table className="data-table">
+                      <caption className="sr-only">Instructor accounts</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Name</th>
+                          <th scope="col">Email</th>
+                          <th scope="col">Specialization</th>
+                          <th scope="col">Instructor ID</th>
+                          <th scope="col">User ID</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(visibleInstructors ?? list).map((instructor) => (
+                          <tr key={instructor.instructorId}>
+                            <td data-label="Name">{instructor.firstName} {instructor.lastName}</td>
+                            <td data-label="Email">{instructor.email}</td>
+                            <td data-label="Specialization">{instructor.specialization ?? "—"}</td>
+                            <td data-label="Instructor ID">{instructor.instructorId}</td>
+                            <td data-label="User ID">{instructor.userId}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )
+              }
             </AsyncView>
           </section>
 
