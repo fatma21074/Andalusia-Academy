@@ -9,7 +9,7 @@ namespace AndalusiaAcademy.Controllers
 {
     [ApiController]
     [Route("api/learner")]
-    [Authorize]
+    [Authorize(Roles = "Learner")]
     public class LearnerController : ControllerBase
     {
         private readonly LearnerService _service;
@@ -27,6 +27,7 @@ namespace AndalusiaAcademy.Controllers
 
         // GET /api/learner/courses/5
         [HttpGet("courses/{courseId:int}")]
+        [Authorize(Roles = "Learner")]
         public async Task<ActionResult<CourseLearningDto>> CourseLearning(int courseId)
         {
             var result = await _service.GetCourseLearningAsync(CurrentUserId, courseId);

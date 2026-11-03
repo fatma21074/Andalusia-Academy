@@ -149,6 +149,14 @@ namespace Application.Services
             if (session is null)
                 return OperationResult<object>.Fail(OperationStatus.NotFound, "Session not found, or it isn't yours.");
 
+            var enrolledUserIds = (await _repo.GetEnrolledStudentsAsync(session.CourseId))
+                .Select(enrollment => enrollment.UserId)
+                .ToHashSet();
+            if (request.Entries.Any(entry => !enrolledUserIds.Contains(entry.UserId)))
+                return OperationResult<object>.Fail(
+                    OperationStatus.BadRequest,
+                    "Attendance can only be recorded for students enrolled in this course.");
+
             foreach (var entry in request.Entries)
                 await _repo.UpsertAttendanceAsync(sessionId, entry.UserId, entry.Status);
 
