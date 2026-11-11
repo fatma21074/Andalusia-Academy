@@ -5,12 +5,21 @@ import FormSelect from "../FormSelect";
 import AsyncView from "./AsyncView";
 
 interface AssignmentPickerProps {
-  assignments: { data?: InstructorAssignment[]; error: ApiError | null; loading: boolean; reload: () => void };
+  assignments: {
+    data?: InstructorAssignment[];
+    error: ApiError | null;
+    loading: boolean;
+    reload: () => void;
+  };
   selectedId: number | null;
   onSelect: (id: number | null) => void;
 }
 
-export default function AssignmentPicker({ assignments, selectedId, onSelect }: AssignmentPickerProps) {
+export default function AssignmentPicker({
+  assignments,
+  selectedId,
+  onSelect,
+}: AssignmentPickerProps) {
   return (
     <AsyncView
       query={assignments}
@@ -19,9 +28,15 @@ export default function AssignmentPicker({ assignments, selectedId, onSelect }: 
     >
       {(list) => (
         <>
-          <div className="table-wrap">
-            <table className="data-table">
+          <div className="table-wrap assignment-table-wrap">
+            <table className="data-table assignment-table">
               <caption className="sr-only">Assignments for this course</caption>
+              <colgroup>
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "50%" }} />
+                <col style={{ width: "15%" }} />
+                <col style={{ width: "15%" }} />
+              </colgroup>
               <thead>
                 <tr>
                   <th scope="col">Title</th>
@@ -34,9 +49,17 @@ export default function AssignmentPicker({ assignments, selectedId, onSelect }: 
                 {list.map((assignment) => (
                   <tr key={assignment.id}>
                     <td data-label="Title">{assignment.title}</td>
-                    <td data-label="Description">{assignment.description || "—"}</td>
-                    <td data-label="Due date">{assignment.dueDate ? formatDate(assignment.dueDate) : "—"}</td>
-                    <td data-label="Submissions">{assignment.submissionCount}</td>
+                    <td data-label="Description">
+                      {assignment.description || "—"}
+                    </td>
+                    <td data-label="Due date">
+                      {assignment.dueDate
+                        ? formatDate(assignment.dueDate)
+                        : "—"}
+                    </td>
+                    <td data-label="Submissions">
+                      {assignment.submissionCount}
+                    </td>
                   </tr>
                 ))}
               </tbody>

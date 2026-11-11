@@ -44,7 +44,7 @@ export default function Contact() {
             </div>
             <div className="contact-page__image-col">
               <img
-                src="/img/contact-support.avif"
+                src="/img/contact-support.webp"
                 alt="A friendly support agent with a headset, ready to help you with your questions"
               />
             </div>

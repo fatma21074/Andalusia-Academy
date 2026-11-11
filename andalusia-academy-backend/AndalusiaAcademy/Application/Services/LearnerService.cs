@@ -81,7 +81,7 @@ namespace Application.Services
                 InstructorName = $"{course.Instructor.User.FirstName} {course.Instructor.User.LastName}",
                 Materials = course.Materials.Select(m => new CourseMaterialDto
                 {
-                    Id = m.Id, Title = m.Title, Type = m.Type, Url = m.Url
+                    Id = m.Id, Title = m.Title, Type = m.Type, Url = m.Url, CreatedAt = m.CreatedAt
                 }).ToList(),
                 Sessions = sessionDtos,
                 Assignments = assignmentDtos,
